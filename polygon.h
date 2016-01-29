@@ -26,10 +26,15 @@ public:
         WPos cm = CMMI(verts, density);
         mi = cm.w;
 
+        major_radius = 0;
+
         // Adjust our coordinates so that the centre of mass lies at the origin
         // in egocentric coordinates.
         for (WPos &v : verts)
         {
+            double dist = (v - cm).length();
+            if (dist > major_radius) major_radius = dist;
+
             v.x -= cm.x;
             v.y -= cm.y;
             worldverts.push_back(QPointF(v.x, v.y));
@@ -45,11 +50,13 @@ public:
     std::vector<WPos> verts;
     std::vector<QPointF> worldverts;
 
+    double major_radius;
+
 private:
     void egoToCamQPointF(const WPos p, QPointF &qp, const Camera &cam);
 };
 
-int quadrantsWound(const Vec, const Vec);
+int quadrantsWound(const Vec&, const Vec&);
 
 
 #endif // POLYGON_H

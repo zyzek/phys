@@ -8,7 +8,7 @@ class Camera;
 
 class Renderable
 {
-public:    
+public:
     virtual void render(QPainter &, const Camera&) = 0;
 
     QColor strokeColor = QColor(Qt::black);

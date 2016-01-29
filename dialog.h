@@ -4,10 +4,12 @@
 #include <QDialog>
 #include <QPainter>
 #include <QTimer>
+#include <QMouseEvent>
+
 #include <vector>
 
-#include "phys.h"
-#include "spring.h"
+
+#include "world.h"
 #include "camera.h"
 #include "clock.h"
 
@@ -25,6 +27,7 @@ public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
 
+
 public slots:
     void nextFrame();
     void physFrame();
@@ -32,24 +35,20 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void mouseMoveEvent(QMouseEvent *);
-
-private:
-    void applyGravity();
-    void applySprings();
+    void mousePressEvent(QMouseEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
+    void mouseDoubleClickEvent(QMouseEvent *);
+    void keyPressEvent(QKeyEvent *);
+    void wheelEvent(QWheelEvent *);
 
     Ui::Dialog *ui;
-    std::vector<Phys*> objects;
-    std::vector<Spring*> springs;
-    std::vector<Renderable*> renderables;
+
+private:
     Camera cam;
+    World world;
     Clock clock;
-    double dt;
-    double timeSpeed;
-    Phys* camFocus;
-    Vec mousePos;
 
-    Polygon tardis;
-
+    Vec lastMousePos = Vec(0, 0);
 };
 
 #endif // DIALOG_H

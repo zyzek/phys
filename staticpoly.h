@@ -2,8 +2,6 @@
 #define STATICPOLY
 
 #include "polygon.h"
-#include "vec.h"
-#include "wpos.h"
 
 class StaticPoly: public Polygon
 {
@@ -16,4 +14,3 @@ public:
 };
 
 #endif // STATICPOLY
-

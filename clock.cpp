@@ -1,6 +1,4 @@
 #include "clock.h"
-#include <chrono>
-#include <iostream>
 
 using namespace std::chrono;
 

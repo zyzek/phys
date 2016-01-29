@@ -1,7 +1,6 @@
 #include "phys.h"
 
 #include <cmath>
-#include <iostream>
 
 #define REVOLUTION 6.283185
 

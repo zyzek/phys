@@ -9,3 +9,7 @@ void Circle::render(QPainter &painter, const Camera &cam)
                         2*radius*cam.zoom, 2*radius*cam.zoom);
 }
 
+bool Circle::isInternal(WPos p)
+{
+    return (Vec(p.x, p.y)).length() <= radius;
+}

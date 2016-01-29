@@ -1,12 +1,7 @@
 #include "polygon.h"
 
 #include <algorithm>
-#include <vector>
 #include <numeric>
-#include <iostream>
-
-#include <QPointF>
-#include <QPainter>
 
 #define PI 3.141592654
 
@@ -51,11 +46,14 @@ double area(const WPos verts[], const int count)
 }
 
 // Calculate a weighted point whose coordinates are the centre of mass, and whose weight
-// Is the moment of inertia of the convex polygon defined by the given set of vertices.
+// is the moment of inertia of the convex polygon defined by the given set of vertices.
 // Weighted vertices will shift the mass distribution.
-// The approach here is to triangulate the convex hull and take the weighted average
-// of the centers of mass of the resulting triangles, where a triangle's mass depends
+// To find the centre of mass, we triangulate the convex hull and take the weighted average
+// of the centres of mass of the resulting triangles, where a triangle's mass depends
 // upon its area.
+// The moment of inertia around the centre of mass is then the sum of the
+// squared distances from the polygon's CoM to the CoM of each triangle, multiplied
+// by that triangle's mass.
 WPos CMMI(std::vector<WPos> verts, double density)
 {
     if (verts.size() < 3) return WPos(0,0);
@@ -94,10 +92,10 @@ WPos CMMI(std::vector<WPos> verts, double density)
 }
 
 
-// Determine the direction a triangle's ordered vertices are oriented
-// negative if clockwise,
-// positive if anti-clockwise
-// zero if the triangle is degenerate.
+// Determine the direction three ordered points are oriented:
+// negative if clockwise;
+// positive if anti-clockwise;
+// zero if they are colinear.
 double orientation(WPos p0, WPos p1, WPos p2)
 {
     return ( (p1.x - p0.x) * (p2.y - p0.y)
@@ -154,9 +152,9 @@ std::vector<WPos> convexHull(std::vector<WPos> points)
         hull.push_back(*iter);
     }
 
-    // We need not check if the last point, e, added produces a concavity.
+    // We need not check if the last point added, e, produces a concavity.
     // If it did, then we could produce a triangle, external to the hull, with vertices
-    // m, e, and p (p being the previous vertex on the hull to e)
+    // m, e, and p (p being the previous vertex on the hull to e, m the hull's first vertex)
     // In this case we have a nonzero angle, epsilon, between me and mp.
     // Then the mp's reference angle, arg(mp) = (arg(me) + epsilon).
     // Note that 0 <= arg(me) <= pi, as m was chosen to minimise y ordinate.
@@ -167,6 +165,7 @@ std::vector<WPos> convexHull(std::vector<WPos> points)
 }
 
 
+// Point given in egocentric coordinates.
 bool Polygon::isInternal(WPos p)
 {
     // Check the angle around our test point that the boundary of the polygon subtends.
@@ -186,7 +185,7 @@ bool Polygon::isInternal(WPos p)
     return winding == 4 || winding == -4;
 }
 
-int quadrantsWound(const Vec p1, const Vec p2)
+int quadrantsWound(const Vec& p1, const Vec& p2)
 {
     if (p1.x > 0) {
         if (p2.x > 0) {
@@ -298,8 +297,3 @@ int quadrantsWound(const Vec p1, const Vec p2)
         }
     }
 }
-
-
-
-
-

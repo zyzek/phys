@@ -1,5 +1,5 @@
-#ifndef LINE
-#define LINE
+#ifndef LINE_H
+#define LINE_H
 #include "renderable.h"
 
 class Line: public Renderable
@@ -18,5 +18,5 @@ void Line::render(QPainter &painter, const Camera &cam)
     painter.drawLine(cam.convertToCameraCoords(p1).qpointf(), cam.convertToCameraCoords(p2).qpointf());
 }
 
-#endif // LINE
+#endif // LINE_H
 

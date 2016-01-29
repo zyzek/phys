@@ -1,100 +1,22 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
-#include <vector>
-#include <iostream>
-#include <QMouseEvent>
-#include <QString>
-
-#include "circle.h"
-#include "polygon.h"
-#include "staticpoly.h"
-#include "line.h"
-
 #define WIDTH 1300
 #define HEIGHT 1000
 
-Dialog::Dialog(QWidget *parent) :
+Dialog::Dialog(QWidget *parent):
     QDialog(parent),
     ui(new Ui::Dialog),
     cam(Camera(WIDTH, HEIGHT)),
-    timeSpeed(1.0)
+    world()
 {
+    this->setMouseTracking(true);
+
     ui->setupUi(this);
     this->resize(WIDTH, HEIGHT);
     this->setStyleSheet("background-color: #111111;");
 
-    Circle* sun = new Circle(Vec(0,0), 40.0, 4.0);
-
-    Circle* mercury = new Circle(Vec(-100, 0), 5.0);
-    mercury->vel = Vec(0, 150);
-    mercury->fillColor = QColor("#e60000");
-
-    Circle* earth = new Circle(Vec(200, 0), 10.0, 1.5);
-    earth->vel = Vec(0, -150);
-    earth->fillColor = QColor("#1ac6ff");
-    Circle* moon = new Circle(Vec(225, 0), 4, 0.4);
-    moon->vel = Vec(0, -115);
-    moon->fillColor = QColor("#bfbfbf");
-    Spring* em = new Spring(earth, Vec(0,0), moon, Vec(0,0), 15, 50);
-    em->strokeColor = Qt::black;
-    springs.push_back(em);
-    renderables.push_back(em);
-
-    std::vector<WPos> points({WPos(0,0), WPos(60,-10), WPos(85, 15), WPos(85, 115), WPos(80, 125), WPos(60, 135), WPos(10, 120), WPos(0, 110)});
-    for (WPos &p : points)
-    {
-        p.x /= 6.0;
-        p.y /= 6.0;
-    }
-
-    tardis = StaticPoly(Vec(-300, 0), points);
-    //tardis->vel = Vec(0, 65);
-    tardis.strokeColor = QColor("#777777");
-    tardis.fillColor = QColor("#111188");
-
-    Circle* jupiter = new Circle(Vec(0, 400), 15);
-    jupiter->vel = Vec(-170, 0);
-    jupiter->fillColor = QColor("#ff8c1a");
-    Circle* europa = new Circle(Vec(0, 425), 3, 0.3);
-    europa->vel = Vec(-140, 0);
-    europa->fillColor = QColor("#ccccff");
-    Circle* callisto = new Circle(Vec(0, 360), 3, 0.3);
-    callisto->vel = Vec(-150, 0);
-    callisto->fillColor = QColor("#996633");
-
-    Circle* pluto = new Circle(Vec(0.0, -600.0), 3);
-    pluto->vel = Vec(120, 0);
-    pluto->fillColor = QColor("#e5e5ff");
-
-
-    Line* line = new Line(Vec(0,0), Vec(400,400));
-    line->strokeColor = QColor(Qt::white);
-
-    objects.push_back(sun);
-    objects.push_back(mercury);
-    objects.push_back(earth);
-    objects.push_back(moon);
-    //objects.push_back(tardis);
-    objects.push_back(jupiter);
-    objects.push_back(europa);
-    objects.push_back(callisto);
-    objects.push_back(pluto);
-
-    renderables.push_back(sun);
-    renderables.push_back(mercury);
-    renderables.push_back(earth);
-    renderables.push_back(moon);
-    renderables.push_back(&tardis);
-    renderables.push_back(jupiter);
-    renderables.push_back(europa);
-    renderables.push_back(callisto);
-    renderables.push_back(pluto);
-    renderables.push_back(line);
-
-
-
-    camFocus = sun;
+    cam.focus = nullptr;
     cam.zoom = 0.75;
 
     QTimer *frameTimer = new QTimer(this);
@@ -117,70 +39,148 @@ void Dialog::nextFrame()
     update();
 }
 
-void Dialog::physFrame()
-{
-    dt = clock.delta()*timeSpeed;
-
-    applySprings();
-    applyGravity();
-
-
-    for (auto c = objects.begin();
-         c != objects.end();
-         ++c)
-    {
-        (*c)->integrate(dt);
-    }
-}
-
 void Dialog::paintEvent(QPaintEvent *event)
 {
-    if (camFocus) {
-            cam.x = camFocus->pos.x;
-            cam.y = camFocus->pos.y;
-    }
     QPainter painter(this);
 
-    Vec wmp = cam.convertToWorldCoords(mousePos);
-    bool isInTardis = tardis.isInternal(tardis.worldToEgo(wmp).wpos());
+    cam.renderScene(painter, world.renderables);
 
-    std::string mp("Mouse pos: " + std::string(wmp));
-    painter.drawText(100, 100, mp.c_str());
+    std::string camPos("Camera Position: " + std::string(cam.pos));
+    painter.drawText(20, 20, camPos.c_str());
 
-    std::string inTard("Is inside Tardis: " + std::to_string(isInTardis));
-    painter.drawText(100, 140, inTard.c_str());
+    Phys* mObject = world.objectAt(cam.mouseWorldCoords().wpos());
+    std::string objName("Mouse on object: ");
+    if (mObject) {
+        objName += mObject->name;
+    } else {
+        objName += "-";
+    }
+    painter.drawText(20, 40, objName.c_str());
 
-    cam.renderScene(painter, renderables);
+    std::string ts("Time Speed: " + std::to_string(world.timeSpeed));
+    painter.drawText(20, 60, ts.c_str());
 }
 
 void Dialog::mouseMoveEvent(QMouseEvent *event)
 {
-    mousePos.x = event->x();
-    mousePos.y = event->y();
-}
+    cam.mousePos = Vec(event->x(), event->y());
 
-void Dialog::applyGravity()
-{
-    for (auto c = objects.begin();
-         c != objects.end();
-         ++c)
-    {
-        for (auto d = c + 1;
-             d != objects.end();
-             ++d)
-        {
-            Vec cd = (*d)->pos - (*c)->pos;
-            Vec grav = cd.unit()*(1.0*((*c)->mass)*((*d)->mass)/cd.length());
-            (*c)->applyForce(grav, Vec(0,0));
-            (*d)->applyForce(grav*-1, Vec(0, 0));
+    if (cam.grabbed) {
+        if (cam.held_object) {
+            cam.held_object->pos = cam.pos_when_grabbed + (cam.mouseWorldCoords() - cam.grab_coords);
+        }
+        else {
+            cam.pos = cam.pos_when_grabbed + (cam.convertToWorldCoords(cam.grab_coords) - cam.mouseWorldCoords());
         }
     }
 }
 
-void Dialog::applySprings()
+void Dialog::mousePressEvent(QMouseEvent *event)
 {
-    for (Spring *s : springs)
+    cam.mousePos = Vec(event->x(), event->y());
+
+    if (event->button() == Qt::LeftButton)
     {
-        s->apply();
+        cam.grabbed = true;
+
+        Phys* mObject = world.objectAt(cam.mouseWorldCoords().wpos());
+
+        if (mObject) {
+            cam.pos_when_grabbed = mObject->pos;
+            cam.grab_coords = cam.mouseWorldCoords();
+            cam.held_object = mObject;
+        }
+        else {
+            cam.pos_when_grabbed = cam.pos;
+            cam.grab_coords = Vec(event->x(), event->y());
+        }
     }
 }
+
+void Dialog::mouseReleaseEvent(QMouseEvent *event)
+{
+    cam.mousePos = Vec(event->x(), event->y());
+
+    if (event->button() == Qt::LeftButton)
+    {
+        cam.grabbed = false;
+
+        if (cam.held_object) {
+            cam.held_object = nullptr;
+        }
+
+    }
+}
+
+void Dialog::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    cam.mousePos = Vec(event->x(), event->y());
+
+    if (event->button() == Qt::LeftButton)
+    {
+        Vec clickCoord = cam.mouseWorldCoords();
+        cam.focus = world.objectAt(clickCoord.wpos());
+    }
+}
+
+void Dialog::wheelEvent(QWheelEvent *event)
+{
+    cam.mousePos = Vec(event->x(), event->y());
+
+    int delta = event->delta();
+
+    if (delta > 0) cam.zoom += delta*cam.zoom/1440;
+    else cam.zoom += delta*cam.zoom/2880;
+
+    // Magic numbers here because the delta is supplied in 1/8ths of a degree of scroll
+    // and we want to go that fraction of the distance to doubling or halving the zoom level.
+}
+
+void Dialog::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+        case Qt::Key_Escape:
+            close();
+            break;
+        case Qt::Key_Equal:
+        case Qt::Key_Plus:
+            world.timeSpeed += 0.1;
+            break;
+        case Qt::Key_Minus:
+            world.timeSpeed -= 0.1;
+            break;
+    }
+
+    if (world.timeSpeed < 0) world.timeSpeed = 0;
+    else if (world.timeSpeed > 5) world.timeSpeed = 5;
+}
+
+
+
+void Dialog::physFrame()
+{
+    world.dt = clock.delta()*world.timeSpeed;
+
+    world.applySprings();
+    world.applyGravity();
+
+
+    for (auto c = world.objects.begin();
+         c != world.objects.end();
+         ++c)
+    {
+        (*c)->integrate(world.dt);
+    }
+
+    cam.mouseVel = cam.mouseWorldCoords() - lastMousePos;
+
+    if (cam.held_object)
+    {
+        cam.held_object->vel = cam.mouseVel*(1/world.dt);
+        cam.held_object->pos = cam.pos_when_grabbed + (cam.mouseWorldCoords() - cam.grab_coords);
+    }
+
+    lastMousePos = cam.mouseWorldCoords();
+
+}
+

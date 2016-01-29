@@ -17,7 +17,6 @@ public:
     WPos operator + (const Vec &);
     WPos operator + (const double &);
 
-    //Vec operator - (const WPos &);
     friend Vec operator - (const WPos &, const WPos &);
     WPos operator - (const double &);
 

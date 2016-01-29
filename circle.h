@@ -1,6 +1,7 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
+#define EPSILON 0.001
 #define PI 3.14159265
 
 #include <QPainter>
@@ -19,6 +20,10 @@ public:
     }
 
     void render(QPainter &, const Camera&);
+    bool intersecting(Circle&);
+    WPos collisionPoint(Circle&);
+
+    bool isInternal(WPos);
 
 private:
     Circle();

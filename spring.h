@@ -6,7 +6,6 @@
 #include "phys.h"
 #include "camera.h"
 
-class Camera;
 class Phys;
 
 class Spring : public Renderable
