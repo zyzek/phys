@@ -1,9 +1,9 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
-#define EPSILON 0.001
 #define PI 3.14159265
 
+#include <math.h>
 #include <QPainter>
 #include "vec.h"
 #include "renderable.h"
@@ -21,7 +21,9 @@ public:
 
     void render(QPainter &, const Camera&);
     bool intersecting(Circle&);
+    bool colliding(Circle&);
     WPos collisionPoint(Circle&);
+    void collide(Circle&, double);
 
     bool isInternal(WPos);
 

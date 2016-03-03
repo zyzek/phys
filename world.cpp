@@ -27,7 +27,7 @@ World::World():
     moon->name = "The Moon";
 
     Spring* em = new Spring(earth, Vec(0,0), moon, Vec(0,0), 15, 50);
-    em->strokeColor = Qt::black;
+    em->strokeColor = Qt::white;
     springs.push_back(em);
     renderables.push_back(em);
 
@@ -38,9 +38,9 @@ World::World():
         p.y /= 6.0;
     }
 
-    StaticPoly* tardis = new StaticPoly(Vec(-300, 0), points);
+    Polygon* tardis = new Polygon(Vec(-300, 0), points);
     tardis->name = "TARDIS";
-    //tardis->vel = Vec(0, 65);
+    tardis->vel = Vec(0, 65);
     tardis->strokeColor = QColor("#777777");
     tardis->fillColor = QColor("#111188");
 
@@ -64,14 +64,14 @@ World::World():
     pluto->fillColor = QColor("#e5e5ff");
     pluto->name = "Pluto";
 
-    Line* line = new Line(Vec(0,0), Vec(400,400));
-    line->strokeColor = QColor(Qt::white);
+    //Line* line = new Line(Vec(0,0), Vec(400,400));
+    //line->strokeColor = QColor(Qt::white);
 
     objects.push_back(sun);
     objects.push_back(mercury);
     objects.push_back(earth);
     objects.push_back(moon);
-    objects.push_back(tardis);
+    //objects.push_back(tardis);
     objects.push_back(jupiter);
     objects.push_back(europa);
     objects.push_back(callisto);
@@ -86,7 +86,7 @@ World::World():
     renderables.push_back(europa);
     renderables.push_back(callisto);
     renderables.push_back(pluto);
-    renderables.push_back(line);
+    //renderables.push_back(line);
 }
 
 void World::applyGravity()

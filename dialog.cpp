@@ -182,5 +182,18 @@ void Dialog::physFrame()
 
     lastMousePos = cam.mouseWorldCoords();
 
+    // Run collisions
+    for (size_t i = 0; i < world.objects.size(); ++i) {
+        for (size_t j = i+1; j < world.objects.size(); ++j) {
+            world.objects[i]->collide(*world.objects[j], world.dt);
+
+            //if (world.objects[i]->colliding(*world.objects[j])) {
+                //WPos p = world.objects[i]->collisionPoint(*world.objects[j]);
+                //Circle* c = new Circle(p, 5);
+                //world.renderables.push_back(c);
+            //}
+        }
+    }
+
 }
 

@@ -1,7 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include "phys.h"
+#include "circle.h"
 #include "spring.h"
 #include "wpos.h"
 
@@ -10,7 +10,7 @@ class World
 public:
     World();
 
-    std::vector<Phys*> objects;
+    std::vector<Circle*> objects;
     std::vector<Spring*> springs;
     std::vector<Renderable*> renderables;
 

@@ -37,6 +37,7 @@ HEADERS  += dialog.h \
     staticpoly.h \
     vec.h \
     world.h \
-    wpos.h
+    wpos.h \
+    collision.h
 
 FORMS    += dialog.ui
