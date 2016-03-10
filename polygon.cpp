@@ -4,6 +4,7 @@
 #include <numeric>
 
 #define PI 3.141592654
+#define ANGLE_EPSILON 0.001
 
 void Polygon::render(QPainter &painter, const Camera &cam)
 {
@@ -183,6 +184,22 @@ bool Polygon::isInternal(WPos p)
     }
 
     return winding == 4 || winding == -4;
+}
+
+bool Polygon::isOnBoundary(WPos p)
+{
+    for (auto iter = verts.begin() + 1; iter != verts.end() - 1; ++iter)
+    {
+        Vec segment = *iter - *(iter - 1);
+        Vec toPoint = p - *(iter - 1);
+
+        if ((segment.unit().angle(toPoint.unit()) < ANGLE_EPSILON) && (toPoint.length() <= segment.length()))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 int quadrantsWound(const Vec& p1, const Vec& p2)

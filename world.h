@@ -10,7 +10,7 @@ class World
 public:
     World();
 
-    std::vector<Circle*> objects;
+    std::vector<Phys*> objects;
     std::vector<Spring*> springs;
     std::vector<Renderable*> renderables;
 

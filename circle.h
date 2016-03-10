@@ -13,24 +13,19 @@ class Circle : public Phys, public Renderable
 {
 public:
     Circle(Vec p, double r, double density=1.0):
-        Phys(p), radius(r)
+        Phys(p, PhysType::Circle, r)
     {
         mass = density*PI*r*r;
         mi = mass*r*r/2.0;
     }
 
     void render(QPainter &, const Camera&);
-    bool intersecting(Circle&);
-    bool colliding(Circle&);
-    WPos collisionPoint(Circle&);
-    void collide(Circle&, double);
 
     bool isInternal(WPos);
 
 private:
     Circle();
 
-    double radius = 1.0;
 };
 
 #endif // CIRCLE_H

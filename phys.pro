@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     spring.cpp \
     vec.cpp \
     world.cpp \
-    wpos.cpp
+    wpos.cpp \
+    collision.cpp
 
 HEADERS  += dialog.h \
     camera.h \
