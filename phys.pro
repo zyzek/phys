@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     vec.cpp \
     world.cpp \
     wpos.cpp \
-    collision.cpp
+    collision.cpp \
+    cosmogony.cpp
 
 HEADERS  += dialog.h \
     camera.h \
@@ -35,10 +36,13 @@ HEADERS  += dialog.h \
     polygon.h \
     renderable.h \
     spring.h \
-    staticpoly.h \
     vec.h \
     world.h \
     wpos.h \
-    collision.h
+    collision.h \
+    cosmogony.h
 
 FORMS    += dialog.ui
+
+DISTFILES += \
+    universe.txt

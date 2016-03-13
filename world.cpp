@@ -2,7 +2,6 @@
 
 #include "circle.h"
 #include "polygon.h"
-#include "staticpoly.h"
 #include "line.h"
 #include "collision.h"
 

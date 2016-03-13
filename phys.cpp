@@ -18,6 +18,10 @@ void Phys::integrate(double dt)
 
 void Phys::applyForce(Vec f, Vec p)
 {
+    if (is_static) {
+        return;
+    }
+
     acc = acc + (f/mass);
     angAcc += p.perpdot(f.rotated(-angle))/mi;
 }

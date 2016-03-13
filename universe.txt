@@ -1,0 +1,119 @@
+
+<circle>
+        [name: Sol]
+        [position: (0,0)]
+        [radius: 40.0]
+        [density: 4.0]
+
+        [physical]
+        [static]
+</circle>
+
+<circle>
+        [name: Mercury]
+        [position: (-100, 0)]
+        [radius: 5.0]
+        [velocity: (0, 150)]
+        [fill color: #e60000]
+        [bounciness: 0.9]
+
+        [physical]
+</circle>
+
+<circle>
+        [name: Earth]
+        [position: (200, 0)]
+        [velocity: (0, -150)]
+        [radius: 10.0]
+        [density: 1.5]
+        [bounciness: 0.9]
+        [fill color: #1ac6ff]
+
+        [physical]
+<circle>
+
+<circle>
+        [name: The Moon]
+        [position: (225, 0)]
+        [radius: 4.0]
+        [density: 0.4]
+        [velocity: (0, -115)]
+        [bounciness: 0.5]
+        [fill color: #bfbfbf]
+
+        [physical]
+</circle>
+
+<circle>
+        [name: Jupiter]
+        [radius: 15.0]
+        [position: (0, 400)]
+        [velocity: (-170, 0)]
+        [bounciness: 0.7]
+        [fill color: #ff8c1a]
+
+        [physical]
+</circle>
+
+<circle>
+        [name: Europa]
+        [position: (0, 425)]
+        [radius: 3]
+        [density: 0.3]
+        [velocity: (-140, 0)]
+        [bounciness: 0.9]
+        [fill color: #ccccff]
+
+        [physical]
+</circle>
+
+<circle>
+        [name: Callisto]
+        [position: (0, 360)]
+        [radius: 3]
+        [density: 0.3]
+        [bounciness: 0.9]
+        [velocity: (-150, 0)]
+        [fill color: #996633]
+
+        [physical]
+</circle>
+
+<circle>
+        [name: Pluto]
+        [position: (0, -600)]
+        [radius: 3]
+        [velocity: (120, 0)]
+        [fill color: #e5e5ff]
+</circle>
+
+<polygon>
+        [name: TARDIS]
+        [polygon: (-300, 0)]
+        [velocity: (0, 65)]
+        [stroke color: #777777]
+        [fill color: #111188]
+
+        [points: (0, 0), (60, -10), (85, 15), (85, 115)
+                 (80, 125), (60, 135), (10, 120), (0, 110)]
+        [scale: 0.1667]
+
+        [static]
+</polygon>
+
+<spring>
+        [ends: Earth, The Moon]
+        [offsets: (0,0), (0,0)]
+        [invisible]
+</spring>
+
+
+#<line>
+        #[ends: (0,0), (400,400)]
+        #[stroke color: #000000]
+#</line>
+
+#<line>
+#        [ends: Mercury, Callisto]
+#</line>
+

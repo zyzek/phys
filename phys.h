@@ -38,6 +38,7 @@ public:
     double mass = 1.0, mi = 1.0; // mi is the moment of inertia
     double bounciness = 1.0;
     double radius = 1.0;
+    bool is_static = false;
 
     std::string name;
     PhysType type = PhysType::Phys;
