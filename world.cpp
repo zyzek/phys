@@ -1,5 +1,11 @@
 #include "world.h"
 
+#include <iostream>
+//#include <stdlib.h>
+//#include <fstream>
+//#include <vector>
+
+#include "cosmogony.h"
 #include "circle.h"
 #include "polygon.h"
 #include "line.h"
@@ -8,23 +14,24 @@
 World::World():
     timeSpeed(1.0)
 {
+    /*
     Circle* sun = new Circle(Vec(0,0), 40.0, 4.0);
     sun->name = "Sol";
 
     Circle* mercury = new Circle(Vec(-100, 0), 5.0);
-    mercury->bounciness = 0.9;
+    mercury->elasticity = 0.9;
     mercury->vel = Vec(0, 150);
     mercury->fillColor = QColor("#e60000");
     mercury->name = "Mercury";
 
     Circle* earth = new Circle(Vec(200, 0), 10.0, 1.5);
-    earth->bounciness = 0.9;
+    earth->elasticity = 0.9;
     earth->vel = Vec(0, -150);
     earth->fillColor = QColor("#1ac6ff");
     earth->name = "Earth";
 
     Circle* moon = new Circle(Vec(225, 0), 4, 0.4);
-    moon->bounciness = 0.9;
+    moon->elasticity = 0.9;
     moon->vel = Vec(0, -115);
     moon->fillColor = QColor("#bfbfbf");
     moon->name = "The Moon";
@@ -48,25 +55,25 @@ World::World():
     tardis->fillColor = QColor("#111188");
 
     Circle* jupiter = new Circle(Vec(0, 400), 15);
-    jupiter->bounciness = 0.9;
+    jupiter->elasticity = 0.9;
     jupiter->vel = Vec(-170, 0);
     jupiter->fillColor = QColor("#ff8c1a");
     jupiter->name = "Jupiter";
 
     Circle* europa = new Circle(Vec(0, 425), 3, 0.3);
-    europa->bounciness = 0.9;
+    europa->elasticity = 0.9;
     europa->vel = Vec(-140, 0);
     europa->fillColor = QColor("#ccccff");
     europa->name = "Europa";
 
     Circle* callisto = new Circle(Vec(0, 360), 3, 0.3);
-    callisto->bounciness = 0.9;
+    callisto->elasticity = 0.9;
     callisto->vel = Vec(-150, 0);
     callisto->fillColor = QColor("#996633");
     callisto->name = "Callisto";
 
     Circle* pluto = new Circle(Vec(0.0, -600.0), 3);
-    pluto->bounciness = 0.9;
+    pluto->elasticity = 0.9;
     pluto->vel = Vec(120, 0);
     pluto->fillColor = QColor("#e5e5ff");
     pluto->name = "Pluto";
@@ -94,20 +101,41 @@ World::World():
     renderables.push_back(callisto);
     renderables.push_back(pluto);
     //renderables.push_back(line);
+    */
+
+    ifstream in_file("universe.txt");
+
+    if (in_file.is_open())
+    {
+        vector<string> *tokens = tokenise(in_file);
+        vector<Tag> *tags = parse_tags(*tokens);
+
+        int i = 0;
+        try {
+            while (i < tags->size()) {
+                Circle *c = parse_circle(*tags, i);
+                std::cout << c->name << std::endl;
+                objects.push_back(c);
+                renderables.push_back(c);
+            }
+        }
+        catch (string s) {
+            std::cout << s << std::endl;
+        }
+
+
+        delete tokens;
+        delete tags;
+        in_file.close();
+    }
 }
 
 void World::applyGravity()
 {
-    for (auto c = objects.begin();
-         c != objects.end();
-         ++c)
-    {
-        for (auto d = c + 1;
-             d != objects.end();
-             ++d)
-        {
+    for (auto c = objects.begin(); c != objects.end(); ++c) {
+        for (auto d = c + 1; d != objects.end(); ++d) {
             Vec cd = (*d)->pos - (*c)->pos;
-            Vec grav = cd.unit()*(1.0*((*c)->mass)*((*d)->mass)/cd.length());
+            Vec grav = cd.unit()*(1.0*((*c)->mass)*((*d)->mass)/pow(cd.length(), 2));
             (*c)->applyForce(grav, Vec(0,0));
             (*d)->applyForce(grav*-1, Vec(0, 0));
         }

@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    parsing_main();
+    //parsing_main();
 
     QApplication a(argc, argv);
     Dialog w;

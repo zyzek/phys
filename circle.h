@@ -12,10 +12,10 @@
 class Circle : public Phys, public Renderable
 {
 public:
-    Circle(Vec p, double r, double density=1.0):
+    Circle(Vec p, double r, double m=1.0):
         Phys(p, PhysType::Circle, r)
     {
-        mass = density*PI*r*r;
+        mass = m;
         mi = mass*r*r/2.0;
     }
 

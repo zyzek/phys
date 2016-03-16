@@ -36,9 +36,9 @@ public:
     Vec pos = Vec(0,0), vel = Vec(0,0), acc = Vec(0,0);
     double angle = 0.0, angVel = 0.0, angAcc = 0.0;
     double mass = 1.0, mi = 1.0; // mi is the moment of inertia
-    double bounciness = 1.0;
+    double elasticity = 1.0;
     double radius = 1.0;
-    bool is_static = false;
+    bool is_static = false, is_physical = false;
 
     std::string name;
     PhysType type = PhysType::Phys;

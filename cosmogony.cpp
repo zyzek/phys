@@ -1,5 +1,7 @@
 #include "cosmogony.h"
 
+#include <QColor>
+
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
@@ -8,6 +10,8 @@
 #define WSPACE " \t\n"
 #define DELIM "<>()[],:/"
 
+// Break a stream of text into tokens, where any single delimiter is a token,
+// and whitespace separates other tokens.
 vector<string> *tokenise(istream &file_stream) {
     vector<string> *tokens = new vector<string>();
     string line, curr_token_val = "";
@@ -58,18 +62,23 @@ vector<string> *tokenise(istream &file_stream) {
     return tokens;
 }
 
+void checked_incr(int &j, int size) {
+    ++j;
+    if (j >= size) throw string("Item opened, never closed.");
+}
+
 Tag parse_tag(vector<string> &tokens, int &i) {
     int j = i;
     Tag_Type t_type = Open_Tag;
 
     // Open a tag.
     if (tokens[j] != "<") throw string("Expected tag opened with <.");
-    ++j;
+    checked_incr(j, tokens.size());
 
     // Determine if tag is a closer.
     if (tokens[j] == "/") {
         t_type = Close_Tag;
-        ++j;
+        checked_incr(j, tokens.size());
     }
 
     // Tag body must be a single string not containing any delimiters.
@@ -79,7 +88,7 @@ Tag parse_tag(vector<string> &tokens, int &i) {
     }
 
     Tag new_tag = {t_type, tokens[j]};
-    ++j;
+    checked_incr(j, tokens.size());
 
     // Check that the tag closes properly.
     if (tokens[j] != ">") throw string("Tag contains extra symbol " + tokens[j]);
@@ -93,8 +102,7 @@ Tag parse_attribute(vector<string> &tokens, int &i) {
 
     // Open an attribute.
     if (tokens[j] != "[") throw string("Expected attribute opened with [.");
-    ++j;
-    if (j >= tokens.size()) throw string("Attribute never closed.");
+    checked_incr(j, tokens.size());
 
     // First item must be the attribute's name, containing no delimiters.
     if (is_delim(tokens[j])) {
@@ -105,8 +113,7 @@ Tag parse_attribute(vector<string> &tokens, int &i) {
     Tag new_attribute = {Attribute, tokens[j]};
 
     while (true) {
-        ++j;
-        if (j >= tokens.size()) throw string("Attribute never closed.");
+        checked_incr(j, tokens.size());
 
         // Valueless attribute.
         if (tokens[j] == "]") {
@@ -115,8 +122,7 @@ Tag parse_attribute(vector<string> &tokens, int &i) {
         }
         // Terminate name.
         else if (tokens[j] == ":") {
-            ++j;
-            if (j >= tokens.size()) throw string("Attribute never closed.");
+            checked_incr(j, tokens.size());
             break;
         }
         else if (is_delim(tokens[j])) {
@@ -131,8 +137,7 @@ Tag parse_attribute(vector<string> &tokens, int &i) {
     new_attribute.values.push_back(tokens[j]);
 
     while (true) {
-        ++j;
-        if (j >= tokens.size()) throw string("Attribute never closed.");
+        checked_incr(j, tokens.size());
 
         if (tokens[j] == "]") {
             i = j+1;
@@ -185,7 +190,7 @@ bool is_delim(std::string s) {
 
 
 void parsing_main() {
-    ifstream in_file("~/code/cqt/phys/universe.txt");
+    ifstream in_file("universe.txt");
 
     if (in_file.is_open())
     {
@@ -207,6 +212,21 @@ void parsing_main() {
             cout << endl;
         }
 
+        int i = 0;
+
+        vector<Circle*> circs;
+
+        try {
+        while (i < tags->size()) {
+            Circle *c = parse_circle(*tags, i);
+            cout << c->name << endl;
+            circs.push_back(c);
+        }}
+        catch (string s) {
+            cout << s << endl;
+        }
+
+
         delete tokens;
         delete tags;
         in_file.close();
@@ -217,7 +237,234 @@ void parsing_main() {
     }
 }
 
-Circle* parse_circle(std::ifstream file_stream) {
-    std::cout << "Unclosed <circle> tag within input file." << std::endl;
+double parse_double(vector<string> &strs, int &i) {
+    try {
+        if (i >= strs.size()) throw string("Tried to parse floating point number; none found.");
+        double d = stod(strs[i], NULL);
+        ++i;
+        return d;
+    }
+    catch (...) {
+        throw string("Expected floating point number, found " + strs[i] + " instead.");
+    }
+}
+
+vector<double> parse_tuple(vector<string> &strs, int &i) {
+    vector<double> tuple;
+    int j = i;
+
+    if (strs[j] != "(") {
+       throw string("Expected ( at start of tuple.");
+    }
+    if ((j + 1) < strs.size() && strs[j + 1] == ")") {
+        throw string("Tuples may not be empty.");
+    }
+
+    while (j < strs.size()) {
+        checked_incr(j, strs.size());
+
+        try {
+            tuple.push_back(parse_double(strs, j));
+        }
+        catch (string s){
+            throw "In tuple: " + s;
+        }
+
+        if (strs[j] == ")") {
+            i = j + 1;
+            return tuple;
+        }
+        else if (strs[j] != ",") {
+           throw string("Expected ',' in tuple.");
+        }
+    }
+
+    throw string("Tuple never closed");
+}
+
+vector<vector<double>> parse_tuples(vector<string> &strs, int &i) {
+    int j = i;
+    vector<vector<double>> tuples;
+
+    try {
+        tuples.push_back(parse_tuple(strs, j));
+    }
+    catch (string s) {
+        throw s;
+    }
+
+    while (j < strs.size()) {
+       if (strs[j] != ",") {
+           i = j;
+           return tuples;
+       }
+
+       try {
+           checked_incr(j, strs.size());
+           tuples.push_back(parse_tuple(strs, j));
+       }
+       catch (string s) {
+           i = j;
+           return tuples;
+       }
+
+    }
+
+    return tuples;
+
+}
+
+
+Circle* parse_circle (vector<Tag> &tags, int &i) {
+    static int count = 0;
+    string name = "CIRCLE" + to_string(count);
+
+    Vec position(0,0), velocity(0,0);
+    float elasticity = 0.98;
+    float radius = 1.0, mass = 1.0, density = 1.0;
+    bool rad_set = false, mass_set = false, dens_set = false;
+    float angle = 0.0, angular_velocity = 0.0;
+
+    string fill_color = "#ff00ff", stroke_color = "#000000";
+    bool fill_set = false, stroke_set = false;
+
+    bool is_static = false, is_physical = false, is_invisible = false;
+
+    int j = i;
+
+    // Opening tag
+    if (tags[j].type != Open_Tag && tags[j].attr == "circle") {
+        throw string("No opening tag for circle.");
+    }
+
+    checked_incr(j, tags.size());
+
+    // Parse all attributes.
+    while (j < tags.size()) {
+        if (tags[j].type != Attribute) break;
+        int k = 0;
+
+        if (tags[j].attr == "name") {
+            name = "";
+            for (k = 0; k < tags[j].values.size(); ++k) {
+                name += tags[j].values[k] + ((k != tags[j].values.size() - 1) ? " " : "");
+            }
+        }
+        else if (tags[j].attr == "position") {
+            vector<double> pos = parse_tuple(tags[j].values, k);
+            if (pos.size() != 2) throw string("Position vector must have arity 2.");
+            position = Vec(pos[0], pos[1]);
+        }
+        else if (tags[j].attr == "velocity") {
+            vector<double> vel = parse_tuple(tags[j].values, k);
+            if (vel.size() != 2) throw string("Velocity vector must have arity 2.");
+            velocity = Vec(vel[0], vel[1]);
+        }
+        else if (tags[j].attr == "density") {
+            density = parse_double(tags[j].values, k);
+            dens_set = true;
+
+            if (rad_set) {
+                mass = PI*radius*radius*density;
+                mass_set = true;
+            }
+            else if (mass_set) {
+                radius = sqrt(mass/(density*PI));
+                rad_set = true;
+            }
+        }
+        else if (tags[j].attr == "mass") {
+            mass = parse_double(tags[j].values, k);
+            mass_set = true;
+
+            if (rad_set) {
+                density = mass/(PI*radius*radius);
+                dens_set = true;
+            }
+            else if (dens_set) {
+                radius = sqrt(mass/(PI*density));
+                rad_set = true;
+            }
+        }
+        else if (tags[j].attr == "radius") {
+            radius = parse_double(tags[j].values, k);
+            rad_set = true;
+
+            if (dens_set) {
+                mass = PI*radius*radius*density;
+                mass_set = true;
+            }
+            else if (mass_set) {
+                density = mass/(PI*radius*radius);
+                dens_set = true;
+            }
+        }
+        else if (tags[j].attr == "angle") {
+            angle = parse_double(tags[j].values, k);
+        }
+        else if (tags[j].attr == "angular velocity") {
+            angular_velocity = parse_double(tags[j].values, k);
+        }
+        else if (tags[j].attr == "elasticity") {
+            elasticity = parse_double(tags[j].values, k);
+        }
+        else if (tags[j].attr == "fill color") {
+            if (tags[j].values.empty()) throw string("No fill colour supplied.");
+            fill_color = tags[j].values[0];
+            if (!stroke_set) {
+                stroke_color = fill_color;
+            }
+            fill_set = true;
+        }
+        else if (tags[j].attr == "stroke color") {
+            if (tags[j].values.empty()) throw string("No stroke colour supplied.");
+            stroke_color = tags[j].values[0];
+            if (!fill_set) {
+                fill_color = stroke_color;
+            }
+            stroke_set = true;
+        }
+        else if (tags[j].attr == "static") {
+            is_static = true;
+        }
+        else if (tags[j].attr == "physical") {
+            is_physical = true;
+        }
+        else if (tags[j].attr == "invisible") {
+            is_invisible = true;
+        }
+        else {
+            throw string("Invalid tag for circles: " + tags[j].attr);
+        }
+
+        checked_incr(j, tags.size());
+    }
+
+    // Closing tag
+    if (tags[j].type != Close_Tag) {
+        throw string("Circle tag not closed for " + name + ".");
+    }
+    else if (tags[j].attr != "circle") {
+        throw string("Circle closed with incorrect tag: " + tags[j].attr);
+    }
+
+    Circle *c = new Circle(position, radius, mass);
+    c->name = name;
+    c->fillColor = QColor(fill_color.c_str());
+    c->strokeColor = QColor(stroke_color.c_str());
+    c->pos = position;
+    c->vel = velocity;
+    c->elasticity = elasticity;
+    c->angle = angle;
+    c->angVel = angular_velocity;
+    c->is_static = is_static;
+    c->is_physical = is_physical;
+
+    i = j + 1;
+    return c;
+}
+
+Polygon* parse_polygon(vector<Tag> &tags) {
+    throw string("Parser not implemented yet.");
     return NULL;
 }

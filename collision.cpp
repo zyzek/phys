@@ -128,7 +128,7 @@ void collision::cc_collide(Circle &c1, Circle &c2, double dt) {
     Vec col_rel_vel = col_normal * (c2.vel - c1.vel).dot(col_normal);
 
     // magnitude of momentum change to apply
-    double dm = -(1 + c1.bounciness*c2.bounciness) * (col_rel_vel).dot(col_normal) / (1/c1.mass + 1/c2.mass);
+    double dm = -(1 + c1.elasticity*c2.elasticity) * (col_rel_vel).dot(col_normal) / (1/c1.mass + 1/c2.mass);
 
     // update velocities
     c1.vel = c1.vel - col_normal*(dm/c1.mass);

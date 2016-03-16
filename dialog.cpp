@@ -45,6 +45,8 @@ void Dialog::paintEvent(QPaintEvent *event)
 
     cam.renderScene(painter, world.renderables);
 
+    painter.setPen(QColor("#ffffff"));
+
     std::string camPos("Camera Position: " + std::string(cam.pos));
     painter.drawText(20, 20, camPos.c_str());
 
