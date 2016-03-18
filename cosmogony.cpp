@@ -62,13 +62,13 @@ vector<string> *tokenise(istream &file_stream) {
     return tokens;
 }
 
-void checked_incr(int &j, int size) {
+void checked_incr(size_t &j, size_t size) {
     ++j;
     if (j >= size) throw string("Item opened, never closed.");
 }
 
-Tag parse_tag(vector<string> &tokens, int &i) {
-    int j = i;
+Tag parse_tag(vector<string> &tokens, size_t &i) {
+    size_t j = i;
     Tag_Type t_type = Open_Tag;
 
     // Open a tag.
@@ -97,8 +97,8 @@ Tag parse_tag(vector<string> &tokens, int &i) {
     return new_tag;
 }
 
-Tag parse_attribute(vector<string> &tokens, int &i) {
-    int j = i;
+Tag parse_attribute(vector<string> &tokens, size_t &i) {
+    size_t j = i;
 
     // Open an attribute.
     if (tokens[j] != "[") throw string("Expected attribute opened with [.");
@@ -153,8 +153,7 @@ Tag parse_attribute(vector<string> &tokens, int &i) {
 vector<Tag> *parse_tags(vector<string> &tokens) {
     vector<Tag> *tags = new vector<Tag>();
 
-    int i = 0;
-
+    size_t i = 0;
     while (i < tokens.size()) {
         try {
             Tag t = parse_tag(tokens, i);
@@ -188,7 +187,7 @@ bool is_delim(std::string s) {
     return s.length() == 1 && in_str(s[0], DELIM);
 }
 
-double parse_double(vector<string> &strs, int &i) {
+double parse_double(vector<string> &strs, size_t &i) {
     try {
         if (i >= strs.size()) throw string("Tried to parse floating point number; none found.");
         double d = stod(strs[i], NULL);
@@ -200,9 +199,9 @@ double parse_double(vector<string> &strs, int &i) {
     }
 }
 
-vector<double> parse_tuple(vector<string> &strs, int &i) {
+vector<double> parse_tuple(vector<string> &strs, size_t &i) {
     vector<double> tuple;
-    int j = i;
+    size_t j = i;
 
     if (strs[j] != "(") {
        throw string("Expected ( at start of tuple.");
@@ -233,8 +232,8 @@ vector<double> parse_tuple(vector<string> &strs, int &i) {
     throw string("Tuple never closed");
 }
 
-vector<vector<double>> parse_tuples(vector<string> &strs, int &i) {
-    int j = i;
+vector<vector<double>> parse_tuples(vector<string> &strs, size_t &i) {
+    size_t j = i;
     vector<vector<double>> tuples;
 
     try {
@@ -266,7 +265,7 @@ vector<vector<double>> parse_tuples(vector<string> &strs, int &i) {
 }
 
 
-Circle* parse_circle (vector<Tag> &tags, int &i) {
+Circle* parse_circle (vector<Tag> &tags, size_t &i) {
     static int count = 0;
     string name = "CIRCLE" + to_string(count);
 
@@ -282,7 +281,7 @@ Circle* parse_circle (vector<Tag> &tags, int &i) {
 
     bool is_static = false, is_physical = false, is_invisible = false;
 
-    int j = i;
+    size_t j = i;
 
     // Opening tag
     if (tags[j].type != Open_Tag && tags[j].attr == "circle") {
@@ -294,7 +293,7 @@ Circle* parse_circle (vector<Tag> &tags, int &i) {
     // Parse all attributes.
     while (j < tags.size()) {
         if (tags[j].type != Attribute) break;
-        int k = 0;
+        size_t k = 0;
 
         if (tags[j].attr == "name") {
             name = "";

@@ -175,8 +175,6 @@ void Dialog::keyPressEvent(QKeyEvent *event)
     else if (world->time_speed > 1000) world->time_speed = 1000;
 }
 
-
-
 void Dialog::physFrame()
 {
     world->dt = clock.delta()*world->time_speed*SECONDS_PER_DAY;

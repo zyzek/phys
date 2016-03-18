@@ -73,7 +73,7 @@ World::World()
         vector<string> *tokens = tokenise(in_file);
         vector<Tag> *tags = parse_tags(*tokens);
 
-        int i = 0;
+        size_t i = 0;
         try {
             while (i < tags->size()) {
                 Circle *c = parse_circle(*tags, i);

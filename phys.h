@@ -32,15 +32,17 @@ public:
 
     virtual bool is_internal(WPos) const = 0;
 
+
     Vec pos = Vec(0,0), vel = Vec(0,0), acc = Vec(0,0);
     double angle = 0.0, ang_vel = 0.0, ang_acc = 0.0;
     double mass = 1.0, mi = 1.0; // mi is the moment of inertia
     double elasticity = 1.0;
-    double radius = 1.0;
-    bool is_static = false, is_physical = false;
 
     std::string name;
     PhysType type = PhysType::Phys;
+
+    double radius = 1.0;
+    bool is_static = false, is_physical = false;
 };
 
 #endif // PHYS_H

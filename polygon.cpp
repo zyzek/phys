@@ -8,7 +8,7 @@
 
 void Polygon::render(QPainter &painter, const Camera &cam)
 {
-    for (auto i = 0; i < verts.size(); ++i)
+    for (size_t i = 0; i < verts.size(); ++i)
     {
         ego_to_cam_QPointF(verts[i], world_verts[i], cam);
     }
