@@ -13,9 +13,11 @@ public:
     Vec(double X, double Y):
         x(X), y(Y) { }
     Vec(const Vec& v):
-        x(v.x), y(v.y) { }
+        x(v.x), y(v.y) {}
     Vec(const WPos& p):
-        Vec(p.x, p.y) { }
+        Vec(p.x, p.y) {}
+
+    virtual ~Vec() {}
 
     Vec& operator = (const Vec&);
     Vec operator + (Vec);
@@ -40,7 +42,7 @@ public:
     Vec rotated(double angle);
 
     double dot(Vec);
-    double perpdot(Vec);
+    double perp_dot(Vec);
 
     QPointF qpointf();
     WPos wpos();

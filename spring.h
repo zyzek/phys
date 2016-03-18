@@ -12,18 +12,20 @@ class Spring : public Renderable
 {
 public:
     Spring(Phys* A, Vec ap, Phys* B, Vec bp, double L, double S):
-        a(A), b(B), aAttach(ap), bAttach(bp), length(L), springiness(S)
+        a(A), b(B), a_attach(ap), b_attach(bp), length(L), elasticity(S)
     {
-        fillColor = Qt::darkRed;
+        fill_color = Qt::darkRed;
     }
+
+    virtual ~Spring() {}
 
     void apply();
     void render(QPainter &, const Camera&);
 
     Phys *a, *b;
-    Vec aAttach, bAttach;
+    Vec a_attach, b_attach;
     double length;
-    double springiness;
+    double elasticity;
 };
 
 #endif // SPRING_H

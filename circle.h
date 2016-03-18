@@ -12,16 +12,12 @@
 class Circle : public Phys, public Renderable
 {
 public:
-    Circle(Vec p, double r, double m=1.0):
-        Phys(p, PhysType::Circle, r)
-    {
-        mass = m;
-        mi = mass*r*r/2.0;
-    }
+    Circle(Vec p, double r, double m=1.0);
+    virtual ~Circle() {}
 
     void render(QPainter &, const Camera&);
 
-    bool isInternal(WPos);
+    bool is_internal(WPos) const;
 
 private:
     Circle();

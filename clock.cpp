@@ -12,8 +12,8 @@ double Clock::elapsed()
 double Clock::delta()
 {
     high_resolution_clock::time_point t = high_resolution_clock::now();
-    duration<double> passed = t - lastQuery;
-    lastQuery = t;
+    duration<double> passed = t - last_query;
+    last_query = t;
     return passed.count();
 }
 

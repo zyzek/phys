@@ -45,4 +45,6 @@ HEADERS  += dialog.h \
 FORMS    += dialog.ui
 
 DISTFILES += \
-    universe.txt
+    universe.txt \
+    solar_system.txt \
+    TODO

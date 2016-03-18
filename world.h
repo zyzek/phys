@@ -8,20 +8,28 @@
 class World
 {
 public:
-    World();
+    virtual ~World();
+
+    static World* get_world();
 
     std::vector<Phys*> objects;
     std::vector<Spring*> springs;
     std::vector<Renderable*> renderables;
 
-    void applyGravity();
-    void applySprings();
+    void apply_gravity();
+    void apply_springs();
 
-    Phys* objectAt(WPos);
+    Phys* object_at(WPos);
 
-    double timeSpeed;
-    Phys* camFocus;
+    double time_speed = 10.0;
+    Phys* cam_focus;
     double dt;
+
+protected:
+    World();
+
+private:
+    static World* the_world;
 
 };
 

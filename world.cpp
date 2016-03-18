@@ -1,9 +1,17 @@
+/* World
+ * World uses the Singleton creational pattern.
+ * To obtain the current world, get_world() must be called.
+ *
+ * The world object holds the various physically-significant objects,
+ * and the list of things to be rendered, which may or may not be physical.
+ *
+ * Additionally the world also handles applying gravitation and spring forces,
+ * and determines which objects to check collisions between.
+ */
+
 #include "world.h"
 
 #include <iostream>
-//#include <stdlib.h>
-//#include <fstream>
-//#include <vector>
 
 #include "cosmogony.h"
 #include "circle.h"
@@ -11,31 +19,32 @@
 #include "line.h"
 #include "collision.h"
 
-World::World():
-    timeSpeed(1.0)
+#define G (6.67408e-11)
+
+#define CONF_FILE "universe.txt"
+
+World::~World() {
+    for (Spring *s : springs) {
+        delete s;
+    }
+
+    // For now, all objects are added to the render queue, so
+    // deleting the latter deletes the former.
+    for (Renderable *r : renderables) {
+        delete r;
+    }
+}
+
+World* World::the_world = 0;
+
+World* World::get_world() {
+    if (0 == the_world) the_world = new World();
+    return the_world;
+}
+
+World::World()
 {
     /*
-    Circle* sun = new Circle(Vec(0,0), 40.0, 4.0);
-    sun->name = "Sol";
-
-    Circle* mercury = new Circle(Vec(-100, 0), 5.0);
-    mercury->elasticity = 0.9;
-    mercury->vel = Vec(0, 150);
-    mercury->fillColor = QColor("#e60000");
-    mercury->name = "Mercury";
-
-    Circle* earth = new Circle(Vec(200, 0), 10.0, 1.5);
-    earth->elasticity = 0.9;
-    earth->vel = Vec(0, -150);
-    earth->fillColor = QColor("#1ac6ff");
-    earth->name = "Earth";
-
-    Circle* moon = new Circle(Vec(225, 0), 4, 0.4);
-    moon->elasticity = 0.9;
-    moon->vel = Vec(0, -115);
-    moon->fillColor = QColor("#bfbfbf");
-    moon->name = "The Moon";
-
     Spring* em = new Spring(earth, Vec(0,0), moon, Vec(0,0), 15, 50);
     em->strokeColor = Qt::white;
     springs.push_back(em);
@@ -53,57 +62,11 @@ World::World():
     tardis->vel = Vec(0, 65);
     tardis->strokeColor = QColor("#777777");
     tardis->fillColor = QColor("#111188");
-
-    Circle* jupiter = new Circle(Vec(0, 400), 15);
-    jupiter->elasticity = 0.9;
-    jupiter->vel = Vec(-170, 0);
-    jupiter->fillColor = QColor("#ff8c1a");
-    jupiter->name = "Jupiter";
-
-    Circle* europa = new Circle(Vec(0, 425), 3, 0.3);
-    europa->elasticity = 0.9;
-    europa->vel = Vec(-140, 0);
-    europa->fillColor = QColor("#ccccff");
-    europa->name = "Europa";
-
-    Circle* callisto = new Circle(Vec(0, 360), 3, 0.3);
-    callisto->elasticity = 0.9;
-    callisto->vel = Vec(-150, 0);
-    callisto->fillColor = QColor("#996633");
-    callisto->name = "Callisto";
-
-    Circle* pluto = new Circle(Vec(0.0, -600.0), 3);
-    pluto->elasticity = 0.9;
-    pluto->vel = Vec(120, 0);
-    pluto->fillColor = QColor("#e5e5ff");
-    pluto->name = "Pluto";
-
     //Line* line = new Line(Vec(0,0), Vec(400,400));
     //line->strokeColor = QColor(Qt::white);
-
-    objects.push_back(sun);
-    objects.push_back(mercury);
-    objects.push_back(earth);
-    objects.push_back(moon);
-    //objects.push_back(tardis);
-    objects.push_back(jupiter);
-    objects.push_back(europa);
-    objects.push_back(callisto);
-    objects.push_back(pluto);
-
-    renderables.push_back(sun);
-    renderables.push_back(mercury);
-    renderables.push_back(earth);
-    renderables.push_back(moon);
-    renderables.push_back(tardis);
-    renderables.push_back(jupiter);
-    renderables.push_back(europa);
-    renderables.push_back(callisto);
-    renderables.push_back(pluto);
-    //renderables.push_back(line);
     */
 
-    ifstream in_file("universe.txt");
+    ifstream in_file(CONF_FILE);
 
     if (in_file.is_open())
     {
@@ -128,21 +91,25 @@ World::World():
         delete tags;
         in_file.close();
     }
+    else
+    {
+        cout << "Error opening file: " << CONF_FILE << endl;
+    }
 }
 
-void World::applyGravity()
+void World::apply_gravity()
 {
     for (auto c = objects.begin(); c != objects.end(); ++c) {
         for (auto d = c + 1; d != objects.end(); ++d) {
             Vec cd = (*d)->pos - (*c)->pos;
-            Vec grav = cd.unit()*(1.0*((*c)->mass)*((*d)->mass)/pow(cd.length(), 2));
-            (*c)->applyForce(grav, Vec(0,0));
-            (*d)->applyForce(grav*-1, Vec(0, 0));
+            Vec grav = cd.unit()*(G*((*c)->mass)*((*d)->mass)/pow(cd.length(), 2));
+            (*c)->apply_force(grav, Vec(0,0));
+            (*d)->apply_force(grav*-1, Vec(0, 0));
         }
     }
 }
 
-void World::applySprings()
+void World::apply_springs()
 {
     for (Spring *s : springs)
     {
@@ -151,10 +118,10 @@ void World::applySprings()
 }
 
 // Input vector is in world coordinates.
-Phys* World::objectAt(WPos coord) {
+Phys* World::object_at(WPos coord) {
     for (Phys* o : objects)
     {
-        if (o->isInternal( o->worldToEgo(coord).wpos() )) return o;
+        if (o->is_internal( o->world_to_ego(coord).wpos() )) return o;
     }
 
     return nullptr;

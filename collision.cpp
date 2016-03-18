@@ -78,10 +78,10 @@ bool collision::cc_intersecting (Circle &c1, Circle&c2) {
 bool collision::cp_intersecting (Circle &c, Polygon &p) {return false;}
 bool collision::pp_intersecting (Polygon &p1, Polygon &p2) {
     for (WPos p : p1.verts) {
-        if (p2.isInternal(p)) return true;
+        if (p2.is_internal(p)) return true;
     }
     for (WPos p : p2.verts) {
-        if (p1.isInternal(p)) return true;
+        if (p1.is_internal(p)) return true;
     }
     return false;
 }
@@ -94,7 +94,10 @@ bool collision::cc_colliding (Circle &c1, Circle &c2) {
 
 bool collision::cp_colliding (Circle &c, Polygon &p) {return false;}
 
-bool collision::pp_colliding (Polygon &p1, Polygon &p2) {return false;}
+bool collision::pp_colliding (Polygon &p1, Polygon &p2) {
+
+    return false;
+}
 
 void collision::cc_collide(Circle &c1, Circle &c2, double dt) {
     if (!cc_intersecting(c1, c2)) return;

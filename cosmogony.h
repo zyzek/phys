@@ -40,7 +40,4 @@ bool in_str(char, const char* str);
 Circle* parse_circle(vector<Tag>&, int&);
 Polygon* parse_polygon(vector<Tag>&);
 
-void parsing_main();
-
-
 #endif // COSMOGONY_H

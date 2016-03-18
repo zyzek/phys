@@ -1,15 +1,30 @@
 #include "circle.h"
 
-void Circle::render(QPainter &painter, const Camera &cam)
+Circle::Circle(Vec p, double r, double m):
+    Phys(p, PhysType::Circle, r)
 {
-    painter.setPen(strokeColor);
-    painter.setBrush(QBrush(fillColor));
-    Vec screenpos = cam.convertToCameraCoords(pos);
-    painter.drawEllipse(screenpos.x - radius*cam.zoom, screenpos.y - radius*cam.zoom,
-                        2*radius*cam.zoom, 2*radius*cam.zoom);
+    mass = m;
+    mi = mass*r*r/2.0;
 }
 
-bool Circle::isInternal(WPos p)
-{
+void Circle::render(QPainter &painter, const Camera &cam) {
+    painter.setPen(stroke_color);
+    painter.setBrush(QBrush(fill_color));
+
+    Vec screenpos = cam.to_screen_space(pos);
+    double scaled_rad = cam.scale_by_zoom(radius);
+
+    // Don't draw if off screen.
+    double xl = screenpos.x - scaled_rad;
+    if (xl > cam.dim.x) return;
+    double yt = screenpos.y - scaled_rad;
+    if (yt > cam.dim.y) return;
+    if (screenpos.x + scaled_rad < 0) return;
+    if (screenpos.y + scaled_rad < 0) return;
+
+    painter.drawEllipse(xl, yt, 2*scaled_rad, 2*scaled_rad);
+}
+
+bool Circle::is_internal(WPos p) const {
     return (Vec(p.x, p.y)).length() <= radius;
 }

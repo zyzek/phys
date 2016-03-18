@@ -37,7 +37,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
-    void mouseDoubleClickEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *);
     void wheelEvent(QWheelEvent *);
 
@@ -45,10 +44,10 @@ protected:
 
 private:
     Camera cam;
-    World world;
+    World *world;
     Clock clock;
 
-    Vec lastMousePos = Vec(0, 0);
+    Vec last_mouse_pos = Vec(0, 0);
 };
 
 #endif // DIALOG_H

@@ -10,18 +10,18 @@ void Polygon::render(QPainter &painter, const Camera &cam)
 {
     for (auto i = 0; i < verts.size(); ++i)
     {
-        egoToCamQPointF(verts[i], worldverts[i], cam);
+        ego_to_cam_QPointF(verts[i], world_verts[i], cam);
     }
 
-    painter.setPen(strokeColor);
-    painter.setBrush(QBrush(fillColor));
-    painter.drawConvexPolygon(&worldverts[0], worldverts.size());
+    painter.setPen(stroke_color);
+    painter.setBrush(QBrush(fill_color));
+    painter.drawConvexPolygon(&world_verts[0], world_verts.size());
 }
 
 // Calculate screen space coordinates given egocentric coordinates.
-void Polygon::egoToCamQPointF(const WPos p, QPointF &qp, const Camera &cam)
+void Polygon::ego_to_cam_QPointF(const WPos p, QPointF &qp, const Camera &cam)
 {
-    Vec transformed = cam.convertToCameraCoords(egoToWorld(p));
+    Vec transformed = cam.to_screen_space(ego_to_world(p));
     qp.setX(transformed.x);
     qp.setY(transformed.y);
 }
@@ -115,6 +115,8 @@ struct AngleComp {
     WPos m;
 };
 
+
+// Given a set of points, return the smallest set, in clockwise order, whose hull encloses the entire input set.
 std::vector<WPos> convexHull(std::vector<WPos> points)
 {
     // Remove duplicated elements
@@ -167,26 +169,27 @@ std::vector<WPos> convexHull(std::vector<WPos> points)
 
 
 // Point given in egocentric coordinates.
-bool Polygon::isInternal(WPos p)
+bool Polygon::is_internal(WPos p) const
 {
     // Check the angle around our test point that the boundary of the polygon subtends.
     // We know the point is internal if that angle is a full revolution.
 
-    int winding = quadrantsWound(verts.back() - p, verts.front() - p);
+    int winding = quadrants_wound(verts.back() - p, verts.front() - p);
 
     Vec curr, last = verts.front() - p;
 
     for (const WPos& b : verts)
     {
         curr = b - p;
-        winding += quadrantsWound(last, curr);
+        winding += quadrants_wound(last, curr);
         last = curr;
     }
 
     return winding == 4 || winding == -4;
 }
 
-bool Polygon::isOnBoundary(WPos p)
+// Check if the given point is close enough to any boundary on the hull of this polygon.
+bool Polygon::is_on_boundary(WPos p)
 {
     for (auto iter = verts.begin() + 1; iter != verts.end() - 1; ++iter)
     {
@@ -202,7 +205,8 @@ bool Polygon::isOnBoundary(WPos p)
     return false;
 }
 
-int quadrantsWound(const Vec& p1, const Vec& p2)
+// Determine, given two points, how many quadrant boundaries the line between them crosses.
+int quadrants_wound(const Vec& p1, const Vec& p2)
 {
     if (p1.x > 0) {
         if (p2.x > 0) {

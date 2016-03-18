@@ -13,6 +13,8 @@ public:
     WPos(const WPos& p):
         WPos(p.x, p.y, p.w) { }
 
+    virtual ~WPos() {}
+
     WPos operator + (const WPos &);
     WPos operator + (const Vec &);
     WPos operator + (const double &);

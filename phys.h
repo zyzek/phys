@@ -1,7 +1,6 @@
 #ifndef PHYS_H
 #define PHYS_H
 
-
 #include <string>
 
 #include "vec.h"
@@ -22,19 +21,19 @@ public:
     Phys(Vec p, PhysType t, double r):
         pos(p), type(t), radius(r) {}
 
-
+    virtual ~Phys() {}
 
     void integrate(double dt);
-    virtual void applyForce(Vec f, Vec p);
-    Vec egoPointVel(Vec p);
+    virtual void apply_force(Vec f, Vec p);
+    Vec ego_point_vel(Vec p);
 
-    Vec egoToWorld(Vec p);
-    Vec worldToEgo(Vec p);
+    Vec ego_to_world(Vec p);
+    Vec world_to_ego(Vec p);
 
-    virtual bool isInternal(WPos) = 0;
+    virtual bool is_internal(WPos) const = 0;
 
     Vec pos = Vec(0,0), vel = Vec(0,0), acc = Vec(0,0);
-    double angle = 0.0, angVel = 0.0, angAcc = 0.0;
+    double angle = 0.0, ang_vel = 0.0, ang_acc = 0.0;
     double mass = 1.0, mi = 1.0; // mi is the moment of inertia
     double elasticity = 1.0;
     double radius = 1.0;

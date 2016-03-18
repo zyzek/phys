@@ -9,34 +9,34 @@ void Phys::integrate(double dt)
     vel = vel + (acc*dt);
     pos = pos + (vel*dt);
 
-    angVel += angAcc*dt;
-    angle = fmod(angle + angVel*dt, REVOLUTION);
+    ang_vel += ang_acc*dt;
+    angle = fmod(angle + ang_vel*dt, REVOLUTION);
 
     acc.set(0.0,0.0);
-    angAcc = 0.0;
+    ang_acc = 0.0;
 }
 
-void Phys::applyForce(Vec f, Vec p)
+void Phys::apply_force(Vec f, Vec p)
 {
     if (is_static) {
         return;
     }
 
     acc = acc + (f/mass);
-    angAcc += p.perpdot(f.rotated(-angle))/mi;
+    ang_acc += p.perp_dot(f.rotated(-angle))/mi;
 }
 
-Vec Phys::egoPointVel(Vec p)
+Vec Phys::ego_point_vel(Vec p)
 {
-    return (p.perpendicular()*angVel) +  vel;
+    return (p.perpendicular()*ang_vel) +  vel;
 }
 
-Vec Phys::egoToWorld(Vec p)
+Vec Phys::ego_to_world(Vec p)
 {
     return p.rotated(angle) + pos;
 }
 
-Vec Phys::worldToEgo(Vec p)
+Vec Phys::world_to_ego(Vec p)
 {
     return (p - pos).rotated(-angle);
 }

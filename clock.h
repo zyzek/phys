@@ -10,13 +10,15 @@ class Clock
 
 public:
     Clock():
-        instantiated(high_resolution_clock::now()), lastQuery(instantiated) {}
+        instantiated(high_resolution_clock::now()), last_query(instantiated) {}
+
+    virtual ~Clock() {}
 
     double elapsed();
     double delta();
 
 private:
-    high_resolution_clock::time_point instantiated, lastQuery;
+    high_resolution_clock::time_point instantiated, last_query;
 
 };
 

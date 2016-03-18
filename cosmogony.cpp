@@ -188,55 +188,6 @@ bool is_delim(std::string s) {
     return s.length() == 1 && in_str(s[0], DELIM);
 }
 
-
-void parsing_main() {
-    ifstream in_file("universe.txt");
-
-    if (in_file.is_open())
-    {
-        vector<string> *tokens = tokenise(in_file);
-        vector<Tag> *tags = parse_tags(*tokens);
-        cout << tags->size() << endl;
-
-        for (int i = 0; i < tokens->size(); ++i) {
-            cout << (*tokens)[i] << endl;
-        }
-
-        for (int i = 0; i < tags->size(); ++i) {
-            cout << (*tags)[i].type << " : " << (*tags)[i].attr << " : ";
-
-            for (string s : (*tags)[i].values) {
-                cout << s << " ";
-            }
-
-            cout << endl;
-        }
-
-        int i = 0;
-
-        vector<Circle*> circs;
-
-        try {
-        while (i < tags->size()) {
-            Circle *c = parse_circle(*tags, i);
-            cout << c->name << endl;
-            circs.push_back(c);
-        }}
-        catch (string s) {
-            cout << s << endl;
-        }
-
-
-        delete tokens;
-        delete tags;
-        in_file.close();
-
-    }
-    else {
-        cout << "File never opened." << endl;
-    }
-}
-
 double parse_double(vector<string> &strs, int &i) {
     try {
         if (i >= strs.size()) throw string("Tried to parse floating point number; none found.");
@@ -321,6 +272,7 @@ Circle* parse_circle (vector<Tag> &tags, int &i) {
 
     Vec position(0,0), velocity(0,0);
     float elasticity = 0.98;
+    float scale = 1.0;
     float radius = 1.0, mass = 1.0, density = 1.0;
     bool rad_set = false, mass_set = false, dens_set = false;
     float angle = 0.0, angular_velocity = 0.0;
@@ -399,6 +351,22 @@ Circle* parse_circle (vector<Tag> &tags, int &i) {
                 dens_set = true;
             }
         }
+        else if (tags[j].attr == "diameter") {
+            radius = parse_double(tags[j].values, k)/2;
+            rad_set = true;
+
+            if (dens_set) {
+                mass = PI*radius*radius*density;
+                mass_set = true;
+            }
+            else if (mass_set) {
+                density = mass/(PI*radius*radius);
+                dens_set = true;
+            }
+        }
+        else if (tags[j].attr == "scale") {
+            scale = parse_double(tags[j].values, k);
+        }
         else if (tags[j].attr == "angle") {
             angle = parse_double(tags[j].values, k);
         }
@@ -448,15 +416,15 @@ Circle* parse_circle (vector<Tag> &tags, int &i) {
         throw string("Circle closed with incorrect tag: " + tags[j].attr);
     }
 
-    Circle *c = new Circle(position, radius, mass);
+    Circle *c = new Circle(position, radius*scale, mass);
     c->name = name;
-    c->fillColor = QColor(fill_color.c_str());
-    c->strokeColor = QColor(stroke_color.c_str());
+    c->fill_color = QColor(fill_color.c_str());
+    c->stroke_color = QColor(stroke_color.c_str());
     c->pos = position;
     c->vel = velocity;
     c->elasticity = elasticity;
     c->angle = angle;
-    c->angVel = angular_velocity;
+    c->ang_vel = angular_velocity;
     c->is_static = is_static;
     c->is_physical = is_physical;
 

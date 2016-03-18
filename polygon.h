@@ -41,25 +41,27 @@ public:
 
             v.x -= cm.x;
             v.y -= cm.y;
-            worldverts.push_back(QPointF(v.x, v.y));
+            world_verts.push_back(QPointF(v.x, v.y));
         }
 
-        fillColor = Qt::blue;
+        fill_color = Qt::blue;
     }
+
+    virtual ~Polygon() {}
 
     void render(QPainter &, const Camera&);
     double area();
-    bool isInternal(WPos);
-    bool isOnBoundary(WPos);
+    bool is_internal(WPos) const;
+    bool is_on_boundary(WPos);
 
     std::vector<WPos> verts;
-    std::vector<QPointF> worldverts;
+    std::vector<QPointF> world_verts;
 
 private:
-    void egoToCamQPointF(const WPos p, QPointF &qp, const Camera &cam);
+    void ego_to_cam_QPointF(const WPos p, QPointF &qp, const Camera &cam);
 };
 
-int quadrantsWound(const Vec&, const Vec&);
+int quadrants_wound(const Vec&, const Vec&);
 
 
 #endif // POLYGON_H

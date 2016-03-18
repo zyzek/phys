@@ -101,7 +101,7 @@ double Vec::dot(Vec v)
     return x*v.x + y*v.y;
 }
 
-double Vec::perpdot(Vec v)
+double Vec::perp_dot(Vec v)
 {
     return x*v.y - y*v.x;
 }
