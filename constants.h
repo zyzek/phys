@@ -1,0 +1,16 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define PI (3.141592654)
+#define TWOPI (6.283185208)
+#define COLLISION_EPSILON (0.001)
+#define ANGLE_EPSILON (0.001)
+#define SECONDS_PER_DAY (86400)
+#define WINDOW_WIDTH (1300)
+#define WINDOW_HEIGHT (1000)
+#define G (6.67408e-11)
+#define CONF_FILE "universe.txt"
+#define GRAV_FIELD_POINTS (200)
+#define GRAV_VECTOR_MAX_LENGTH (20)
+
+#endif // CONSTANTS_H

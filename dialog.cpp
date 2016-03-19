@@ -1,21 +1,20 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
-#define WIDTH 1300
-#define HEIGHT 1000
-
-#define SECONDS_PER_DAY (86400)
+#include "constants.h"
+#include <QDebug>
 
 Dialog::Dialog(QWidget *parent):
     QDialog(parent),
     ui(new Ui::Dialog),
-    cam(Camera(WIDTH, HEIGHT)),
-    world(World::get_world())
+    cam(Camera(WINDOW_WIDTH, WINDOW_HEIGHT)),
+    world(World::get_world()),
+    grav_field(&(world->objects))
 {
     this->setMouseTracking(true);
 
     ui->setupUi(this);
-    this->resize(WIDTH, HEIGHT);
+    this->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     this->setStyleSheet("background-color: #111111;");
 
     std::vector<Vec> planet_positions;
@@ -32,9 +31,13 @@ Dialog::Dialog(QWidget *parent):
             }
         }
         cam.min_scale_log = log(smallest_planet);
-        cam.zoom_rescale = 1.0;
+        cam.zoom_rescale = 0.0;
     }
     cam.encompass_points(planet_positions);
+
+    // Set up the force field. (renders behind everything else; inserted at front)
+    auto begin = world->renderables.begin();
+    world->renderables.insert(begin, &grav_field);
 
     // Set up distinct timers for simulation and drawing.
     QTimer *frameTimer = new QTimer(this);
@@ -62,6 +65,9 @@ void Dialog::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 
     cam.move_to_focus();
+
+    //grav_field.render(painter, cam);
+
     cam.render_scene(painter, world->renderables);
 
     painter.setPen(QColor("#ffffff"));
@@ -80,6 +86,8 @@ void Dialog::paintEvent(QPaintEvent *event)
 
     std::string ts("Days per second: " + std::to_string(world->time_speed));
     painter.drawText(20, 60, ts.c_str());
+
+
 }
 
 void Dialog::mouseMoveEvent(QMouseEvent *event)
@@ -98,7 +106,15 @@ void Dialog::mouseMoveEvent(QMouseEvent *event)
 
 void Dialog::mousePressEvent(QMouseEvent *event)
 {
+
     cam.mouse_pos = Vec(event->x(), event->y());
+
+    /*GravVector v(cam.mouse_pos);
+    v.update_world_pos(cam);
+    v.recalc_gravity(*world);
+    v.update_color();
+    qDebug() << v.vec_str().c_str() << "\n";*/
+
 
     if (event->button() == Qt::LeftButton)
     {
@@ -179,10 +195,9 @@ void Dialog::physFrame()
 {
     world->dt = clock.delta()*world->time_speed*SECONDS_PER_DAY;
 
+    // Perform physics force and motion calculations.
     world->apply_springs();
     world->apply_gravity();
-
-
     for (auto c = world->objects.begin();
          c != world->objects.end();
          ++c)
@@ -190,16 +205,16 @@ void Dialog::physFrame()
         (*c)->integrate(world->dt);
     }
 
+    // Handle mouse control.
     cam.mouse_vel = cam.mouse_world_coords() - last_mouse_pos;
-
     if (cam.held_object)
     {
+        // Only set the velocity if time is passing, to avoid division by zero.
         if (world->dt) {
             cam.held_object->vel = cam.mouse_vel*(1/world->dt);
         }
         cam.held_object->pos = cam.pos_when_grabbed + (cam.mouse_world_coords() - cam.grab_coords);
     }
-
     last_mouse_pos = cam.mouse_world_coords();
 
     // Run collisions
@@ -208,6 +223,5 @@ void Dialog::physFrame()
             collision::collide(*world->objects[i], *world->objects[j], world->dt);
         }
     }
-
 }
 

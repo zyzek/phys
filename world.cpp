@@ -18,10 +18,7 @@
 #include "polygon.h"
 #include "line.h"
 #include "collision.h"
-
-#define G (6.67408e-11)
-
-#define CONF_FILE "universe.txt"
+#include "constants.h"
 
 World::~World() {
     for (Spring *s : springs) {
@@ -102,7 +99,9 @@ void World::apply_gravity()
     for (auto c = objects.begin(); c != objects.end(); ++c) {
         for (auto d = c + 1; d != objects.end(); ++d) {
             Vec cd = (*d)->pos - (*c)->pos;
-            Vec grav = cd.unit()*(G*((*c)->mass)*((*d)->mass)/pow(cd.length(), 2));
+            double dist = cd.length();
+            if (dist == 0.0) continue;
+            Vec grav = cd.unit()*(G*((*c)->mass)*((*d)->mass)/pow(dist, 2));
             (*c)->apply_force(grav, Vec(0,0));
             (*d)->apply_force(grav*-1, Vec(0, 0));
         }

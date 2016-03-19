@@ -1,8 +1,7 @@
 #include "phys.h"
 
 #include <cmath>
-
-#define REVOLUTION 6.283185
+#include "constants.h"
 
 void Phys::integrate(double dt)
 {
@@ -10,7 +9,7 @@ void Phys::integrate(double dt)
     pos = pos + (vel*dt);
 
     ang_vel += ang_acc*dt;
-    angle = fmod(angle + ang_vel*dt, REVOLUTION);
+    angle = fmod(angle + ang_vel*dt, TWOPI);
 
     acc.set(0.0,0.0);
     ang_acc = 0.0;

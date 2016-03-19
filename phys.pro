@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     world.cpp \
     wpos.cpp \
     collision.cpp \
-    cosmogony.cpp
+    cosmogony.cpp \
+    gravvector.cpp \
+    gravfield.cpp
 
 HEADERS  += dialog.h \
     camera.h \
@@ -40,7 +42,10 @@ HEADERS  += dialog.h \
     world.h \
     wpos.h \
     collision.h \
-    cosmogony.h
+    cosmogony.h \
+    gravvector.h \
+    constants.h \
+    gravfield.h
 
 FORMS    += dialog.ui
 

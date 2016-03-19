@@ -1,7 +1,8 @@
 #include "vec.h"
 
 #include <cmath>
-#define PI 3.141592654
+
+#include "constants.h"
 
 Vec& Vec::operator= (const Vec &v)
 {
@@ -62,12 +63,12 @@ double Vec::angle() const
 {
     if (x == 0 && y == 0) return 0;
     double a = atan2(y, x);
-    return a > 0 ? a : 2*PI + a;
+    return a > 0 ? a : TWOPI + a;
 }
 
 double Vec::angle(const Vec& v) const {
     double a =  v.angle() - this->angle();
-    return a > 0 ? a : 2*PI + a;
+    return a > 0 ? a : TWOPI + a;
 }
 
 Vec Vec::unit()

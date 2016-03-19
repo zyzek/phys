@@ -1,7 +1,7 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#define EPSILON 0.001
+#include "constants.h"
 
 class Phys;
 class Circle;

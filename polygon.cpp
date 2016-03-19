@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <numeric>
 
-#define PI 3.141592654
-#define ANGLE_EPSILON 0.001
+#include "constants.h"
 
 void Polygon::render(QPainter &painter, const Camera &cam)
 {

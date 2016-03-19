@@ -1,4 +1,7 @@
+Remove Renderables from World
+Fix scaled grabbing
 Fix warnings
+define all operators on Vec and WPos and fix the shit
 Const-ness
 Polygon Parser,
 Collisions solved,

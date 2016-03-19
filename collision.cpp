@@ -89,7 +89,7 @@ bool collision::pp_intersecting (Polygon &p1, Polygon &p2) {
 bool collision::cc_colliding (Circle &c1, Circle &c2) {
     double dist = (c1.pos - c2.pos).length();
     double diam = c1.radius + c2.radius;
-    return fabs(dist - diam) < EPSILON;
+    return fabs(dist - diam) < COLLISION_EPSILON;
 }
 
 bool collision::cp_colliding (Circle &c, Polygon &p) {return false;}

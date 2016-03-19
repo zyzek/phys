@@ -7,13 +7,15 @@
 #include <QMouseEvent>
 
 #include <vector>
-
+#include <array>
 
 #include "world.h"
 #include "camera.h"
 #include "clock.h"
 
 #include "polygon.h"
+#include "gravfield.h"
+#include "constants.h"
 
 namespace Ui {
 class Dialog;
@@ -48,6 +50,8 @@ private:
     Clock clock;
 
     Vec last_mouse_pos = Vec(0, 0);
+
+    GravField grav_field;
 };
 
 #endif // DIALOG_H

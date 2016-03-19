@@ -2,10 +2,13 @@
 # Masses in kg
 
 <circle>
-        [name: Sol]
+        [name: The Sun]
 
-        [mass: 1.989e30]
+        #[mass: 1.989e30]
+        [mass: 0.911e30]
         [radius: 6.96342e8]
+
+        [velocity: (0, 2.55e4)]
 
         [fill color: #ffff00]
 
@@ -13,32 +16,62 @@
 </circle>
 
 <circle>
-        [name: Mercury]
+        [name: Sol 2]
 
-        [mass: 0.33e24]
-        [diameter: 4.879e6]
+        [mass: 0.789e30]
+        [radius: 4.96342e8]
 
         [position: (5.79e10, 0)]
-        [velocity: (0, 4.74e4)]
+        [velocity: (0, -2.5e4)]
 
-        [fill color: #c44201]
+        [fill color: #ffaa00]
 
         [physical]
 </circle>
 
 <circle>
-        [name: Venus]
+        [name: Sol 3]
 
-        [mass: 4.87e24]
-        [diameter: 1.2104e7]
+        [mass: 0.3e30]
+        [radius: 4.96342e8]
 
-        [position: (1.082e11, 0)]
-        [velocity: (0, 3.5e4)]
+        [position: (2.279e11, 0)]
+        [velocity: (0, 2.41e4)]
 
-        [fill color: #c28c00]
+
+        [fill color: #aaaaee]
 
         [physical]
 </circle>
+
+
+#<circle>
+#        [name: Mercury]
+#
+#        [mass: 0.33e24]
+#        [diameter: 4.879e6]
+#
+#        [position: (5.79e10, 0)]
+#        [velocity: (0, 4.74e4)]
+#
+#        [fill color: #c44201]
+#
+#        [physical]
+#</circle>
+
+#<circle>
+#        [name: Venus]
+#
+#        [mass: 4.87e24]
+#        [diameter: 1.2104e7]
+#
+#        [position: (1.082e11, 0)]
+#        [velocity: (0, 3.5e4)]
+#
+#        [fill color: #c28c00]
+#
+#        [physical]
+#</circle>
 
 <circle>
         [name: The Moon]
@@ -68,19 +101,19 @@
         [physical]
 </circle>
 
-<circle>
-        [name: Mars]
-
-        [mass: 6.42e23]
-        [diameter: 6.792e6]
-
-        [position: (2.279e11, 0)]
-        [velocity: (0, 2.41e4)]
-
-        [fill color: #ec3402]
-
-        [physical]
-</circle>
+#<circle>
+#        [name: Mars]
+#
+#        [mass: 6.42e23]
+#        [diameter: 6.792e6]
+#
+#        [position: (2.279e11, 0)]
+#        [velocity: (0, 2.41e4)]
+#
+#        [fill color: #ec3402]
+#
+#        [physical]
+#</circle>
 
 <circle>
         [name: Jupiter]
@@ -141,7 +174,7 @@
 <circle>
         [name: Pluto]
 
-        [mass: 1.46e26]
+        [mass: 1.46e22]
         [diameter: 2.370e6]
 
         [position: (7.3759e12, 0)]
