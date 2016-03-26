@@ -11,6 +11,6 @@
 #define G (6.67408e-11)
 #define CONF_FILE "universe.txt"
 #define GRAV_FIELD_POINTS (200)
-#define GRAV_VECTOR_MAX_LENGTH (20)
+#define GRAV_VECTOR_MAX_LENGTH (15)
 
 #endif // CONSTANTS_H

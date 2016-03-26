@@ -17,6 +17,15 @@ Vec Vec::operator+ (Vec v)
     return temp;
 }
 
+Vec& Vec::operator+= (const Vec &v)
+{
+    x += v.x;
+    y += v.y;
+    return *this;
+}
+
+
+
 Vec Vec::operator- (Vec v)
 {
     Vec temp(x - v.x, y - v.y);
@@ -56,6 +65,11 @@ void Vec::set(double X, double Y)
 double Vec::length() const
 {
     return sqrt(x*x + y*y);
+}
+
+double Vec::length_squared() const
+{
+    return x*x + y*y;
 }
 
 // Returns an angle between 0 and 2PI radians

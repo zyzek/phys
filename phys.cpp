@@ -3,6 +3,7 @@
 #include <cmath>
 #include "constants.h"
 
+
 void Phys::integrate(double dt)
 {
     vel = vel + (acc*dt);

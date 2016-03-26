@@ -1,3 +1,15 @@
+/*
+ * Cosmogony: the study of the origin of the universe.
+ *
+ * This file includes functions for parsing input and creating the resulting universe.
+ *
+ * The primary functions here deal with implementing a recursive-descent parser for the following grammar:
+ *
+ * TAG ->
+ * ATTRIBUTE ->
+ *
+ */
+
 #include "cosmogony.h"
 
 #include <QColor>

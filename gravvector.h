@@ -6,6 +6,7 @@
 #include "camera.h"
 
 #include <string>
+#include <QColor>
 
 
 class GravVector : public Renderable
@@ -24,6 +25,7 @@ public:
     void recalc_gravity(const std::vector<Phys*> &objects);
 
     std::string vec_str();
+    QColor stroke_color = Qt::magenta;
 
 private:
     Vec world_pos = Vec(0,0), cam_pos = Vec(0,0), grav_vector = Vec(0,0);

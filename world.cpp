@@ -1,9 +1,5 @@
 /* World
- * World uses the Singleton creational pattern.
- * To obtain the current world, get_world() must be called.
- *
- * The world object holds the various physically-significant objects,
- * and the list of things to be rendered, which may or may not be physical.
+ * The World object holds the various physically-significant objects.
  *
  * Additionally the world also handles applying gravitation and spring forces,
  * and determines which objects to check collisions between.
@@ -25,18 +21,9 @@ World::~World() {
         delete s;
     }
 
-    // For now, all objects are added to the render queue, so
-    // deleting the latter deletes the former.
-    for (Renderable *r : renderables) {
-        delete r;
+    for (Phys *p : objects) {
+        delete p;
     }
-}
-
-World* World::the_world = 0;
-
-World* World::get_world() {
-    if (0 == the_world) the_world = new World();
-    return the_world;
 }
 
 World::World()
@@ -76,7 +63,6 @@ World::World()
                 Circle *c = parse_circle(*tags, i);
                 std::cout << c->name << std::endl;
                 objects.push_back(c);
-                renderables.push_back(c);
             }
         }
         catch (string s) {
@@ -99,9 +85,9 @@ void World::apply_gravity()
     for (auto c = objects.begin(); c != objects.end(); ++c) {
         for (auto d = c + 1; d != objects.end(); ++d) {
             Vec cd = (*d)->pos - (*c)->pos;
-            double dist = cd.length();
+            double dist = cd.length_squared();
             if (dist == 0.0) continue;
-            Vec grav = cd.unit()*(G*((*c)->mass)*((*d)->mass)/pow(dist, 2));
+            Vec grav = cd.unit()*(G*((*c)->mass)*((*d)->mass)/dist);
             (*c)->apply_force(grav, Vec(0,0));
             (*d)->apply_force(grav*-1, Vec(0, 0));
         }
@@ -124,5 +110,20 @@ Phys* World::object_at(WPos coord) {
     }
 
     return nullptr;
+}
+
+
+void World::render(QPainter &painter, const Camera &cam) {
+    // For now, renders everything, but eventually might change behaviour
+    // if things can be made invisible.
+
+    for (Spring *s : springs) {
+        s->render(painter, cam);
+    }
+
+    for (Phys *p : objects) {
+       p->render(painter, cam);
+    }
+
 }
 

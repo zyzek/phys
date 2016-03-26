@@ -21,6 +21,7 @@ public:
 
     Vec& operator = (const Vec&);
     Vec operator + (Vec);
+    Vec& operator += (const Vec&);
     Vec operator - (Vec);
     Vec operator * (double);
     Vec operator / (double);
@@ -34,6 +35,7 @@ public:
 
     void set(double, double);
     double length() const;
+    double length_squared() const;
     double angle() const;
     double angle(const Vec&) const;
     Vec unit();

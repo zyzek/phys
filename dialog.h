@@ -46,12 +46,14 @@ protected:
 
 private:
     Camera cam;
-    World *world;
+    World world;
     Clock clock;
 
     Vec last_mouse_pos = Vec(0, 0);
 
-    GravField grav_field;
+    GravField *grav_field;
+
+    std::vector<Renderable*> render_queue;
 };
 
 #endif // DIALOG_H

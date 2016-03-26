@@ -1,6 +1,9 @@
 Remove Renderables from World
+encompass_points should take radius of objects into account
+Make sure it works on lab machines
 Fix scaled grabbing
 Fix warnings
+Refactor, remove stuff
 define all operators on Vec and WPos and fix the shit
 Const-ness
 Polygon Parser,

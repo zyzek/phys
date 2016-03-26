@@ -44,6 +44,21 @@
         [physical]
 </circle>
 
+<circle>
+        [name: Big Mercury]
+
+        [mass: 5e26]
+        [diameter: 4.879e7]
+
+        [position: (1e10, 0)]
+        [velocity: (0, 1e5)]
+
+        [fill color: #c44201]
+
+        [physical]
+</circle>
+
+
 
 #<circle>
 #        [name: Mercury]

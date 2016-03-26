@@ -2,6 +2,8 @@
 #define LINE_H
 #include "renderable.h"
 
+#include <QColor>
+
 class Line: public Renderable
 {
 public:
@@ -12,6 +14,8 @@ public:
 
     void render(QPainter &, const Camera &);
     Vec p1, p2;
+
+    QColor stroke_color = Qt::white;
 };
 
 void Line::render(QPainter &painter, const Camera &cam)

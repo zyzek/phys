@@ -2,15 +2,13 @@
 #define PHYS_H
 
 #include <string>
-
 #include "vec.h"
-#include "camera.h"
+#include "renderable.h"
 
-class Camera;
 
 enum class PhysType {Phys, Circle, Polygon};
 
-class Phys
+class Phys : public Renderable
 {
 public:
     Phys() {}
@@ -31,7 +29,6 @@ public:
     Vec world_to_ego(Vec p);
 
     virtual bool is_internal(WPos) const = 0;
-
 
     Vec pos = Vec(0,0), vel = Vec(0,0), acc = Vec(0,0);
     double angle = 0.0, ang_vel = 0.0, ang_acc = 0.0;

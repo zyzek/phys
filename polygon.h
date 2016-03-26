@@ -2,9 +2,9 @@
 #define POLYGON_H
 
 #include <QPainter>
+#include <QColor>
 #include <QPointF>
 #include <vector>
-#include "renderable.h"
 #include "phys.h"
 #include "wpos.h"
 #include "collision.h"
@@ -14,7 +14,7 @@ std::vector<WPos> convexHull(std::vector<WPos>);
 WPos CMMI(std::vector<WPos>, double);
 double area(const WPos[], const int);
 
-class Polygon : public Phys, public Renderable
+class Polygon : public Phys
 {
 public:
     Polygon() {}
@@ -56,6 +56,9 @@ public:
 
     std::vector<WPos> verts;
     std::vector<QPointF> world_verts;
+
+    QColor stroke_color = QColor(Qt::black);
+    QColor fill_color = QColor(Qt::yellow);
 
 private:
     void ego_to_cam_QPointF(const WPos p, QPointF &qp, const Camera &cam);

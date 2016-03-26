@@ -4,8 +4,6 @@
 #include <QPainter>
 #include <vector>
 #include "vec.h"
-#include "phys.h"
-#include "renderable.h"
 
 class Phys;
 class Renderable;

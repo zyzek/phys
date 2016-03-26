@@ -12,6 +12,10 @@
 #include <cmath>
 #include <limits>
 
+#include "phys.h"
+#include "renderable.h"
+
+
 Camera::Camera() {}
 Camera::Camera(int w, int h): dim(w, h) {}
 

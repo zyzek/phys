@@ -9,9 +9,10 @@ GravVector::GravVector(Vec pos)
 
 void GravVector::render(QPainter &painter, const Camera& cam) {
     painter.setPen(stroke_color);
-    Vec cam_grav = Vec(grav_vector.x, -grav_vector.y)*10;
+    Vec cam_grav = Vec(grav_vector.x, -grav_vector.y)*40;
 
     if (cam_grav.length() > GRAV_VECTOR_MAX_LENGTH) cam_grav = cam_grav.unit()*GRAV_VECTOR_MAX_LENGTH;
+    //if (cam_grav.length() < 2) cam_grav = cam_grav.unit()*2;
 
     painter.drawLine(cam_pos.qpointf(), (cam_pos + cam_grav).qpointf());
 }
@@ -39,9 +40,11 @@ void GravVector::recalc_gravity(const std::vector<Phys*> &objects) {
 
 string GravVector::vec_str() {
     string s = "Cam: (" + to_string(cam_pos.x) + ", "  + to_string(cam_pos.y) + ")" +
-             "; World: (" + to_string(world_pos.x) + ", " + to_string(cam_pos.y) + ")" +
+             "; World: (" + to_string(world_pos.x) + ", " + to_string(world_pos.y) + ")" +
              "; Grav: (" + to_string(grav_vector.x) + ", " + to_string(grav_vector.y) + ")" +
+             "; Cam Grav: (" + to_string(grav_vector.x * 40) + ", " + to_string(-grav_vector.y * 40) + ")" +
              "; Hue: " + stroke_color.name().toStdString() +
-             "; Grav Angle: " + to_string(grav_vector.angle()/TWOPI) + "\n";
+             "; Grav Angle: " + to_string(grav_vector.angle()/TWOPI) +
+             "; Length: " + to_string(grav_vector.length()) + "\n";
     return s;
 }

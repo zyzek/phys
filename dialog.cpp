@@ -8,8 +8,8 @@ Dialog::Dialog(QWidget *parent):
     QDialog(parent),
     ui(new Ui::Dialog),
     cam(Camera(WINDOW_WIDTH, WINDOW_HEIGHT)),
-    world(World::get_world()),
-    grav_field(&(world->objects))
+    world(World()),
+    grav_field(new GravField(&world.objects))
 {
     this->setMouseTracking(true);
 
@@ -17,27 +17,29 @@ Dialog::Dialog(QWidget *parent):
     this->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     this->setStyleSheet("background-color: #111111;");
 
-    std::vector<Vec> planet_positions;
+    // Gravity field renders behind everything else; inserted at front.
+    render_queue.push_back(grav_field);
+    render_queue.push_back(&world);
 
+
+    std::vector<Vec> planet_positions;
     // Set up camera focus and zoom parameters.
     cam.focus = nullptr;
     cam.zoom = 0.75;
-    if (world->objects.size()) {
-        double smallest_planet = world->objects[0]->radius;
-        for (size_t i = 0; i < world->objects.size(); ++i) {
-            if (world->objects[i]->radius < smallest_planet) {
-                smallest_planet = world->objects[i]->radius;
-                planet_positions.push_back(world->objects[i]->pos);
+    if (world.objects.size()) {
+        double smallest_planet = world.objects[0]->radius;
+        for (size_t i = 0; i < world.objects.size(); ++i) {
+            if (world.objects[i]->radius < smallest_planet) {
+                smallest_planet = world.objects[i]->radius;
             }
+            planet_positions.push_back(world.objects[i]->pos);
         }
         cam.min_scale_log = log(smallest_planet);
-        cam.zoom_rescale = 0.0;
+        cam.zoom_rescale = 0.5;
     }
     cam.encompass_points(planet_positions);
 
-    // Set up the force field. (renders behind everything else; inserted at front)
-    auto begin = world->renderables.begin();
-    world->renderables.insert(begin, &grav_field);
+
 
     // Set up distinct timers for simulation and drawing.
     QTimer *frameTimer = new QTimer(this);
@@ -63,19 +65,17 @@ void Dialog::nextFrame()
 void Dialog::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    painter.setRenderHints(painter.Antialiasing);
 
     cam.move_to_focus();
-
-    //grav_field.render(painter, cam);
-
-    cam.render_scene(painter, world->renderables);
+    cam.render_scene(painter, render_queue);
 
     painter.setPen(QColor("#ffffff"));
 
     std::string camPos("Camera Position: " + std::string(cam.pos));
     painter.drawText(20, 20, camPos.c_str());
 
-    Phys* mObject = world->object_at(cam.mouse_world_coords().wpos());
+    Phys* mObject = world.object_at(cam.mouse_world_coords().wpos());
     std::string objName("Mouse on object: ");
     if (mObject) {
         objName += mObject->name;
@@ -84,7 +84,7 @@ void Dialog::paintEvent(QPaintEvent *event)
     }
     painter.drawText(20, 40, objName.c_str());
 
-    std::string ts("Days per second: " + std::to_string(world->time_speed));
+    std::string ts("Days per second: " + std::to_string(world.time_speed));
     painter.drawText(20, 60, ts.c_str());
 
 
@@ -109,18 +109,20 @@ void Dialog::mousePressEvent(QMouseEvent *event)
 
     cam.mouse_pos = Vec(event->x(), event->y());
 
-    /*GravVector v(cam.mouse_pos);
+    GravVector v(cam.mouse_pos);
     v.update_world_pos(cam);
-    v.recalc_gravity(*world);
+    v.recalc_gravity(world.objects);
     v.update_color();
-    qDebug() << v.vec_str().c_str() << "\n";*/
+    qDebug() << v.vec_str().c_str() << "\n";
+    //QPainter qp(this);
+    //v.render(qp, cam);
 
 
     if (event->button() == Qt::LeftButton)
     {
         cam.grabbed = true;
 
-        Phys* mObject = world->object_at(cam.mouse_world_coords().wpos());
+        Phys* mObject = world.object_at(cam.mouse_world_coords().wpos());
 
         if (mObject) {
             cam.pos_when_grabbed = mObject->pos;
@@ -135,7 +137,7 @@ void Dialog::mousePressEvent(QMouseEvent *event)
     else if (event->button() == Qt::RightButton)
     {
         Vec clickCoord = cam.mouse_world_coords();
-        cam.focus = world->object_at(clickCoord.wpos());
+        cam.focus = world.object_at(clickCoord.wpos());
     }
 }
 
@@ -174,35 +176,35 @@ void Dialog::keyPressEvent(QKeyEvent *event)
             close();
             break;
         case Qt::Key_Equal:
-            world->time_speed += 1.0;
+            world.time_speed += 1.0;
             break;
         case Qt::Key_Minus:
-            world->time_speed -= 1.0;
+            world.time_speed -= 1.0;
             break;
         case Qt::Key_Plus:
-            world->time_speed += 10.0;
+            world.time_speed += 10.0;
             break;
         case Qt::Key_Underscore:
-            world->time_speed -= 10.0;
+            world.time_speed -= 10.0;
             break;
     }
 
-    if (world->time_speed < 0) world->time_speed = 0;
-    else if (world->time_speed > 1000) world->time_speed = 1000;
+    if (world.time_speed < 0) world.time_speed = 0;
+    else if (world.time_speed > 1000) world.time_speed = 1000;
 }
 
 void Dialog::physFrame()
 {
-    world->dt = clock.delta()*world->time_speed*SECONDS_PER_DAY;
+    world.dt = clock.delta()*world.time_speed*SECONDS_PER_DAY;
 
     // Perform physics force and motion calculations.
-    world->apply_springs();
-    world->apply_gravity();
-    for (auto c = world->objects.begin();
-         c != world->objects.end();
+    world.apply_springs();
+    world.apply_gravity();
+    for (auto c = world.objects.begin();
+         c != world.objects.end();
          ++c)
     {
-        (*c)->integrate(world->dt);
+        (*c)->integrate(world.dt);
     }
 
     // Handle mouse control.
@@ -210,17 +212,17 @@ void Dialog::physFrame()
     if (cam.held_object)
     {
         // Only set the velocity if time is passing, to avoid division by zero.
-        if (world->dt) {
-            cam.held_object->vel = cam.mouse_vel*(1/world->dt);
+        if (world.dt) {
+            cam.held_object->vel = cam.mouse_vel*(1/world.dt);
         }
         cam.held_object->pos = cam.pos_when_grabbed + (cam.mouse_world_coords() - cam.grab_coords);
     }
     last_mouse_pos = cam.mouse_world_coords();
 
     // Run collisions
-    for (size_t i = 0; i < world->objects.size(); ++i) {
-        for (size_t j = i+1; j < world->objects.size(); ++j) {
-            collision::collide(*world->objects[i], *world->objects[j], world->dt);
+    for (size_t i = 0; i < world.objects.size(); ++i) {
+        for (size_t j = i+1; j < world.objects.size(); ++j) {
+            collision::collide(*world.objects[i], *world.objects[j], world.dt);
         }
     }
 }
