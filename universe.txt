@@ -1,145 +1,201 @@
-# Possible tags:
-# 	<circle> and <polygon>
-#		[name: list of strings]
-#		[position: (x,y)]
-#		[velocity: (x,y)]
-#		[density: float]
-#		[mass: float]
-#		[angle: float]
-#		[angular velocity: float]
-#		[elasticity: float]
-#
-#		[fill color: #hhhhhh]
-#		[stroke color: #hhhhhh]
-#
-#		[static]
-#		[physical]
-#		[invisible]
-#
-#		[scale: float]
-#	<circle>
-#		[radius: float]
-#	<polygon>
-#		[points: {(x,y)}]
-#	<spring>
-#	<lines>
+# Distances in m;
+# Masses in kg
 
 <circle>
-        [name: Sol]
-        [position: (0,0)]
-        [radius: 40.0]
-        [density: 4.0]
+        [name: The Sun]
+
+        #[mass: 1.989e30]
+        [mass: 0.911e30]
+        [radius: 6.96342e8]
+
+        [velocity: (0, 2.55e4)]
+
         [fill color: #ffff00]
 
         [physical]
-        [static]
 </circle>
 
 <circle>
-        [name: Mercury]
-        [position: (-100, 0)]
-        [radius: 5.0]
-        [velocity: (0, 150)]
-        [fill color: #e60000]
-        [elasticity: 0.9]
+        [name: Sol 2]
+
+        [mass: 0.789e30]
+        [radius: 4.96342e8]
+
+        [position: (5.79e10, 0)]
+        [velocity: (0, -2.5e4)]
+
+        [fill color: #ffaa00]
 
         [physical]
 </circle>
 
 <circle>
-        [name: Earth]
-        [position: (200, 0)]
-        [velocity: (0, -150)]
-        [radius: 10.0]
-        [density: 1.5]
-        [elasticity: 0.9]
-        [fill color: #1ac6ff]
+        [name: Sol 3]
+
+        [mass: 0.3e30]
+        [radius: 4.96342e8]
+
+        [position: (2.279e11, 0)]
+        [velocity: (0, 2.41e4)]
+
+
+        [fill color: #aaaaee]
 
         [physical]
 </circle>
+
+<circle>
+        [name: Big Mercury]
+
+        [mass: 5e26]
+        [diameter: 4.879e7]
+
+        [position: (1e10, 0)]
+        [velocity: (0, 1e5)]
+
+        [fill color: #c44201]
+
+        [physical]
+</circle>
+
+
+
+#<circle>
+#        [name: Mercury]
+#
+#        [mass: 0.33e24]
+#        [diameter: 4.879e6]
+#
+#        [position: (5.79e10, 0)]
+#        [velocity: (0, 4.74e4)]
+#
+#        [fill color: #c44201]
+#
+#        [physical]
+#</circle>
+
+#<circle>
+#        [name: Venus]
+#
+#        [mass: 4.87e24]
+#        [diameter: 1.2104e7]
+#
+#        [position: (1.082e11, 0)]
+#        [velocity: (0, 3.5e4)]
+#
+#        [fill color: #c28c00]
+#
+#        [physical]
+#</circle>
 
 <circle>
         [name: The Moon]
-        [position: (225, 0)]
-        [radius: 4.0]
-        [density: 0.4]
-        [velocity: (0, -115)]
-        [elasticity: 0.5]
+
+        [mass: 7.3e22]
+        [diameter: 3.475e6]
+
+        [position: (1.49984e11, 0)]
+        [velocity: (0, 3.08e4)]
+
         [fill color: #bfbfbf]
 
         [physical]
 </circle>
 
 <circle>
+        [name: The Earth]
+
+        [mass: 5.97e24]
+        [diameter: 1.2756e7]
+
+        [position: (1.496e11, 0)]
+        [velocity: (0, 2.98e4)]
+
+        [fill color: #1ac6ff]
+
+        [physical]
+</circle>
+
+#<circle>
+#        [name: Mars]
+#
+#        [mass: 6.42e23]
+#        [diameter: 6.792e6]
+#
+#        [position: (2.279e11, 0)]
+#        [velocity: (0, 2.41e4)]
+#
+#        [fill color: #ec3402]
+#
+#        [physical]
+#</circle>
+
+<circle>
         [name: Jupiter]
-        [radius: 15.0]
-        [position: (0, 400)]
-        [velocity: (-170, 0)]
-        [elasticity: 0.7]
+
+        [mass: 1.898e27]
+        [diameter: 1.42984e8]
+
+        [position: (7.786e11, 0)]
+        [velocity: (0, 1.31e4)]
+
         [fill color: #ff8c1a]
 
         [physical]
 </circle>
 
 <circle>
-        [name: Europa]
-        [position: (0, 425)]
-        [radius: 3]
-        [density: 0.3]
-        [velocity: (-140, 0)]
-        [elasticity: 0.9]
-        [fill color: #ccccff]
+        [name: Saturn]
+
+        [mass: 5.68e26]
+        [diameter: 1.20536e8]
+
+        [position: (1.4335e12, 0)]
+        [velocity: (0, 9.7e3)]
+
+        [fill color: #deb87d]
 
         [physical]
 </circle>
 
 <circle>
-        [name: Callisto]
-        [position: (0, 360)]
-        [radius: 3]
-        [density: 0.3]
-        [elasticity: 0.9]
-        [velocity: (-150, 0)]
-        [fill color: #996633]
+        [name: Uranus]
+
+        [mass: 8.68e25]
+        [diameter: 5.1118e7]
+
+        [position: (2.8725e12, 0)]
+        [velocity: (0, 6.8e3)]
+
+        [fill color: #6eb7ef]
+
+        [physical]
+</circle>
+
+<circle>
+        [name: Neptune]
+
+        [mass: 1.02e26]
+        [diameter: 4.9528e7]
+
+        [position: (4.4951e12, 0)]
+        [velocity: (0, 5.4e3)]
+
+        [fill color: #0259d3]
 
         [physical]
 </circle>
 
 <circle>
         [name: Pluto]
-        [position: (0, -600)]
-        [radius: 3]
-        [velocity: (120, 0)]
-        [fill color: #e5e5ff]
+
+        [mass: 1.46e22]
+        [diameter: 2.370e6]
+
+        [position: (7.3759e12, 0)]
+        [velocity: (0, 4e3)]
+
+        [fill color: #ad9761]
+
+        [physical]
 </circle>
-
-#<polygon>
-#        [name: TARDIS]
-#        [polygon: (-300, 0)]
-#        [velocity: (0, 65)]
-#        [stroke color: #777777]
-#        [fill color: #111188]
-#
-#        [points: (0, 0), (60, -10), (85, 15), (85, 115)A
-#                 (80, 125), (60, 135), (10, 120), (0, 110)]
-#        [scale: 0.1667]
-#
-#        [static]
-#</polygon>
-#
-#<spring>
-#        [ends: Earth, The Moon]
-#        [offsets: (0,0), (0,0)]
-#        [invisible]
-#</spring>
-#
-#
-#<line>
-#        [ends: (0,0), (400,400)]
-#        [stroke color: #000000]
-#</line>
-#
-#<line>
-#        [ends: Mercury, Callisto]
-#</line>
-

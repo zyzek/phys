@@ -107,3 +107,53 @@ double Camera::scale_by_zoom(double r) const {
 
     return zoom*r + zoom_rescale*(0.5 + log(r) - min_scale_log);
 }
+
+Vec Camera::get_pos(void) const
+{
+	return pos;
+}
+
+void Camera::set_pos(const Vec &new_pos)
+{
+	pos = new_pos;
+}
+
+Vec Camera::get_dimensions(void) const
+{
+	return dim;
+}
+
+Vec Camera::set_dimensions(const Vec &new_dim)
+{
+	return dim = new_dim;
+}
+
+double Camera::get_zoom(void) const
+{
+	return zoom;
+}
+
+void Camera::set_zoom(const double new_zoom)
+{
+	zoom = new_zoom;
+}
+
+double Camera::get_zoom_rescale(void) const
+{
+	return zoom_rescale;
+}
+
+void Camera::set_zoom_rescale(const double new_rescale)
+{
+	zoom_rescale = new_rescale;
+}
+
+double Camera::get_min_scale_log(void) const
+{
+	return min_scale_log;
+}
+
+void Camera::set_min_scale_log(const double new_min)
+{
+	min_scale_log = new_min;
+}

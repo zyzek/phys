@@ -24,6 +24,23 @@ public:
     void move_to_focus();
     double scale_by_zoom(double) const;
 
+	// GETTERS, SETTERS
+	Vec get_pos(void) const;
+	void set_pos(const Vec &);
+
+	Vec get_dimensions(void) const;
+	Vec set_dimensions(const Vec &);
+
+	double get_zoom(void) const;
+	void set_zoom(const double);
+
+	double get_zoom_rescale(void) const;
+	void set_zoom_rescale(const double);
+
+	double get_min_scale_log(void) const;
+	void set_min_scale_log(const double);
+
+
     // pos : the camera's current world position
     Vec pos = Vec(0, 0);
 
@@ -37,7 +54,7 @@ public:
     // The log size of the smallest object considered when performing rescaling.
     double min_scale_log = 1.0;
 
-    // Variable facilitating mouse interaction.
+    // Variables facilitating mouse interaction.
     bool grabbed = false;
     Phys* held_object = nullptr;
     Vec grab_coords = Vec(0,0), pos_when_grabbed = Vec(0,0);
